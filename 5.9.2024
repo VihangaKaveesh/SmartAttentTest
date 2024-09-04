@@ -1,0 +1,28 @@
+1.Login.html
+  handles the login page
+
+2.Login.php
+  handles the credential check from the databases
+
+3.Teacher.php
+  teacher dashboard
+  a form to create the file
+  Qr code generation :
+      phpqrcode/qrlib.php
+  data collction of the Qr :
+      time
+      latitude and longitutude - calculates the geolocation
+      subject/topic
+  getting the geolocation :
+      JavaScript
+  Displaying the Qr
+
+4.Student.php
+  student dashboard
+  15min scan validation
+  decode the QR :
+      json.decode
+  Qr expire check
+  Teacher - student distance calculate :
+  getting the mobile device geolocation
+      JavaScript
