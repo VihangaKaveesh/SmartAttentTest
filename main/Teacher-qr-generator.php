@@ -6,9 +6,9 @@ session_start();
 include 'db.php';
 
 // Check if the user is a teacher
-// if ($_SESSION['role'] != 'teacher') {
-//     die("Access Denied");
-// }
+if ($_SESSION['role'] != 'teacher') {
+    die("Access Denied");
+}
 
 // Fetch the classes from the 'classes' table
 $teacher_id = $_SESSION['teacher_id'];

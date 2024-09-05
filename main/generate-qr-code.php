@@ -6,9 +6,9 @@ include 'phpqrcode/qrlib.php'; // Assuming you use the 'phpqrcode' library
 include 'db.php';
 
 // Check if the user is a teacher
-// if ($_SESSION['role'] != 'teacher') {
-//     die("Access Denied");
-// }
+if ($_SESSION['role'] != 'teacher') {
+    die("Access Denied");
+}
 
 // Get class details and geolocation
 $class_id = $_POST['class_id'];

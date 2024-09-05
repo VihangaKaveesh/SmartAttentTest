@@ -1,69 +1,58 @@
 <?php
-
-// Include the database connection file
+session_start();
 include 'db.php';
 
-// Start a new or resume an existing session
-session_start();
+// Collect user credentials
+$username = $_POST['username'];
+$password = $_POST['password'];
 
-// Check if 'user_id' exists in the session and set it, otherwise set it as an empty string
-if(isset($_SESSION['user_id'])){
-   $user_id = $_SESSION['user_id'];
-}else{
-   $user_id = '';
+// Check student credentials
+$query = "SELECT student_id, name FROM students WHERE username = ? AND password = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $_SESSION['role'] = 'student';
+    $_SESSION['student_id'] = $row['student_id'];
+    $_SESSION['name'] = $row['name'];
+    header("Location: student_dashboard.php");
+    exit();
 }
 
-// Check if the login form has been submitted
-if(isset($_POST['submit'])){
+// Check teacher credentials
+$query = "SELECT teacher_id, name FROM teachers WHERE username = ? AND password = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
-   // Sanitize the 'user_id' input to prevent XSS attacks
-   $id = $_POST['user_id'];
-   $id = filter_var($id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-   // Hash the password using sha1 and sanitize it
-   $pass = sha1($_POST['pass']);
-   $pass = filter_var($pass, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-   // Check if the credentials exist in the 'students' table
-   $select_student = $conn->prepare("SELECT * FROM `students` WHERE user_id = ? AND password = ?");
-   $select_student->execute([$id, $pass]);
-   
-   // Check if the credentials exist in the 'lecturer' table
-   $select_lecturer = $conn->prepare("SELECT * FROM `lecturer` WHERE lecturer_id = ? AND password = ?");
-   $select_lecturer->execute([$id, $pass]);
-
-   // Check if the credentials exist in the 'management' table
-   $select_management = $conn->prepare("SELECT * FROM `management` WHERE management_id = ? AND password = ?");
-   $select_management->execute([$id, $pass]);
-
-   // If user is a student
-   if($select_student->rowCount() > 0){
-      // Set the session for the student user
-      $row = $select_student->fetch(PDO::FETCH_ASSOC);
-      $_SESSION['user_id'] = $row['id'];
-      // Redirect to the student dashboard
-      header('location:studentDashboard.php');
-   }
-   // If user is a lecturer
-   elseif($select_lecturer->rowCount() > 0){
-      // Set the session for the lecturer user
-      $row = $select_lecturer->fetch(PDO::FETCH_ASSOC);
-      $_SESSION['user_id'] = $row['id'];
-      // Redirect to the lecturer dashboard
-      header('location:lecturerDashboard.php');
-   }
-   // If user is management
-   elseif($select_management->rowCount() > 0){
-      // Set the session for the management user
-      $row = $select_management->fetch(PDO::FETCH_ASSOC);
-      $_SESSION['user_id'] = $row['id'];
-      // Redirect to the management dashboard
-      header('location:managementDashboard.php');
-   }
-   // If credentials do not match any user
-   else{
-      $message[] = 'Incorrect ID or Password!';
-   }
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $_SESSION['role'] = 'teacher';
+    $_SESSION['teacher_id'] = $row['teacher_id'];
+    $_SESSION['name'] = $row['name'];
+    header("Location: Teacher-qr-generator.php");
+    exit();
 }
 
+// Check management credentials
+$query = "SELECT management_id, name FROM management WHERE username = ? AND password = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $_SESSION['role'] = 'management';
+    $_SESSION['management_id'] = $row['management_id'];
+    $_SESSION['name'] = $row['name'];
+    header("Location: management_dashboard.php");
+    exit();
+}
+
+echo "Invalid username or password.";
 ?>
