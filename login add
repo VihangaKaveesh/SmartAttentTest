@@ -1,11 +1,3 @@
-<?php
-session_start();
-include 'db.php';
-
-// Collect user credentials
-$username = $_POST['username'];
-$password = $_POST['password'];
-
 // Check student credentials
 $query = "SELECT student_id, name FROM students WHERE username = ? AND password = ?";
 $stmt = $conn->prepare($query);
@@ -34,7 +26,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'teacher';
     $_SESSION['teacher_id'] = $row['teacher_id'];
     $_SESSION['name'] = $row['name'];
-    header("Location: Teacher-qr-generator.php");
+    header("Location: teacher_dashboard.php");
     exit();
 }
 
@@ -53,6 +45,3 @@ if ($result->num_rows > 0) {
     header("Location: management_dashboard.php");
     exit();
 }
-
-echo "Invalid username or password.";
-?>
