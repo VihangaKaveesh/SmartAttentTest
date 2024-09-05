@@ -8,15 +8,15 @@ if (isset($_POST['submit'])) {
 
     // Sanitize and store form input values
     $username = filter_var($_POST['username'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $password = sha1($_POST['password']);  // Encrypt the password with sha1
+    $password = $_POST['password'];  // Retrieve the raw password
     $name = filter_var($_POST['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $phone_number = filter_var($_POST['phone_number'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $course = filter_var($_POST['course'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-    // Validate username (letters only)
-    if (!preg_match("/^[a-zA-Z]+$/", $username)) {
-        $message[] = 'Username should contain only letters!';
+    // Validate name (letters only)
+    if (!preg_match("/^[a-zA-Z]+$/", $name)) {
+        $message[] = 'Name should contain only letters!';
     }
     // Validate email format using regex
     elseif (!preg_match("/^[^\s@]+@[^\s@]+\.[^\s@]+$/", $email)) {
@@ -36,9 +36,12 @@ if (isset($_POST['submit'])) {
             // If the username already exists, show an error message
             $message[] = 'Username already exists, please choose another!';
         } else {
+            // Encrypt the password using password_hash()
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT); // bcrypt by default
+
             // Insert the new student into the database
             $insert_student = $conn->prepare("INSERT INTO `students` (username, password, name, email, phone_number, course) VALUES (?, ?, ?, ?, ?, ?)");
-            $insert_student->execute([$username, $password, $name, $email, $phone_number, $course]);
+            $insert_student->execute([$username, $hashed_password, $name, $email, $phone_number, $course]);
 
             // Redirect to the login page after successful registration
             if ($insert_student) {
