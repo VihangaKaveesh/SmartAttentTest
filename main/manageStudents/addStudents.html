@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+</head>
+<body>
+
+<?php
+if (isset($message)) {
+    foreach ($message as $msg) {
+        echo '<p>' . $msg . '</p>';
+    }
+}
+?>
+
+<section class="form-container">
+    <form action="" method="post">
+        <div class="box">
+            <p>Username: <input type="text" name="username" class="box" required></p>
+            <p>Password: <input type="password" name="password" class="box" required></p>
+            <p>Name: <input type="text" name="name" class="box" required></p>
+            <p>Email: <input type="email" name="email" class="box" required></p>
+            <p>Phone Number: <input type="text" name="phone_number" class="box" required></p>
+            <p>Course:
+                <select name="course" class="drop-down" required>
+                    <option value="" selected disabled>Select Course</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Business Administration">Business Administration</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Psychology">Psychology</option>
+                    <option value="Literature">Literature</option>
+                </select>
+            </p>
+            <div class="flex-btn">
+                <input type="submit" name="submit" class="btn" value="Register">
+            </div>
+        </div>
+    </form>
+</section>
+
+</body>
+</html>
