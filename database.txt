@@ -1,0 +1,82 @@
+CREATE TABLE Management (
+    Management_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Role VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Teacher (
+    Teacher_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE Student (
+    Student_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Address VARCHAR(200),
+    Phone VARCHAR(15)
+);
+
+CREATE TABLE Assignments (
+    Assignment_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Submission_Date DATE NOT NULL,
+    Teacher_ID INT,
+    Student_ID INT,
+    FOREIGN KEY (Teacher_ID) REFERENCES Teacher(Teacher_ID),
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID)
+);
+
+CREATE TABLE Marks (
+    Mark_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Assignment_ID INT,
+    Grade VARCHAR(5),
+    Student_ID INT,
+    Teacher_ID INT,
+    FOREIGN KEY (Assignment_ID) REFERENCES Assignments(Assignment_ID),
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),
+    FOREIGN KEY (Teacher_ID) REFERENCES Teacher(Teacher_ID)
+);
+
+CREATE TABLE Lecture_Materials (
+    Material_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Upload_Date DATE NOT NULL,
+    Teacher_ID INT,
+    FOREIGN KEY (Teacher_ID) REFERENCES Teacher(Teacher_ID)
+);
+
+CREATE TABLE Attendance (
+    Attendance_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Date DATE NOT NULL,
+    Time TIME NOT NULL,
+    Status VARCHAR(20),
+    Student_ID INT,
+    Teacher_ID INT,
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),
+    FOREIGN KEY (Teacher_ID) REFERENCES Teacher(Teacher_ID)
+);
+
+CREATE TABLE Management_Teacher (
+    Management_ID INT,
+    Teacher_ID INT,
+    PRIMARY KEY (Management_ID, Teacher_ID),
+    FOREIGN KEY (Management_ID) REFERENCES Management(Management_ID),
+    FOREIGN KEY (Teacher_ID) REFERENCES Teacher(Teacher_ID)
+);
+
+CREATE TABLE Management_Student (
+    Management_ID INT,
+    Student_ID INT,
+    PRIMARY KEY (Management_ID, Student_ID),
+    FOREIGN KEY (Management_ID) REFERENCES Management(Management_ID),
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID)
+);
+
+CREATE TABLE Student_Lecture_Materials (
+   Student_ID INT,
+   Material_ID INT,
+   PRIMARY KEY (Student_ID, Material_ID),
+   FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),
+   FOREIGN KEY (Material_ID) REFERENCES Lecture_Materials(Material_ID)
+);
