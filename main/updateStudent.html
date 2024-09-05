@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Update Student</title>
+</head>
+<body>
+
+<h2>Update Student Details</h2>
+
+<!-- Form to update student details -->
+<form action="" method="post">
+   <label>Username:</label>
+   <input type="text" name="username" value="<?= $student['username']; ?>" required><br><br>
+
+   <label>Name:</label>
+   <input type="text" name="name" value="<?= $student['name']; ?>" required><br><br>
+
+   <label>Email:</label>
+   <input type="email" name="email" value="<?= $student['email']; ?>" required><br><br>
+
+   <label>Phone Number:</label>
+   <input type="text" name="phone_number" value="<?= $student['phone_number']; ?>"><br><br>
+
+   <label>Course:</label>
+   <select name="course" required>
+      <option value="" disabled>Select Course</option>
+      <option value="Computer Science" <?= $student['course'] == 'Computer Science' ? 'selected' : ''; ?>>Computer Science</option>
+      <option value="Mathematics" <?= $student['course'] == 'Mathematics' ? 'selected' : ''; ?>>Mathematics</option>
+      <option value="Physics" <?= $student['course'] == 'Physics' ? 'selected' : ''; ?>>Physics</option>
+      <option value="Chemistry" <?= $student['course'] == 'Chemistry' ? 'selected' : ''; ?>>Chemistry</option>
+      <option value="Biology" <?= $student['course'] == 'Biology' ? 'selected' : ''; ?>>Biology</option>
+      <option value="Engineering" <?= $student['course'] == 'Engineering' ? 'selected' : ''; ?>>Engineering</option>
+      <option value="Business Administration" <?= $student['course'] == 'Business Administration' ? 'selected' : ''; ?>>Business Administration</option>
+      <option value="Economics" <?= $student['course'] == 'Economics' ? 'selected' : ''; ?>>Economics</option>
+      <option value="Psychology" <?= $student['course'] == 'Psychology' ? 'selected' : ''; ?>>Psychology</option>
+      <option value="Literature" <?= $student['course'] == 'Literature' ? 'selected' : ''; ?>>Literature</option>
+   </select><br><br>
+
+   <!-- Update button -->
+   <input type="submit" name="update" value="Update Student">
+</form>
+
+</body>
+</html>
