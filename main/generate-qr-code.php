@@ -33,8 +33,8 @@ $qr_content = json_encode([
 ]);
 
 // Generate the QR code image
-QRcode::png($qr_content, "qrcodes/qr_{$qr_code_id}.png");
+QRcode::png($qr_content, "qrcodes/{$qr_code_id}.png");
 
 // Display the QR code image
-echo "<img src='qrcodes/qr_{$qr_code_id}.png' />";
+echo "<img src='qrcodes/{$qr_code_id}.png' />";
 ?>
