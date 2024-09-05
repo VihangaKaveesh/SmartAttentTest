@@ -67,35 +67,3 @@ if(isset($_POST['submit'])){
 }
 
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Login</title>
-</head>
-<body>
-
-<!-- Section for the login form -->
-<section class="form-container">
-
-   <!-- Form for user login -->
-   <form action="" method="post">
-      <h3>Login Now</h3>
-      
-      <!-- Input for user ID (student, lecturer, management) with validation to remove spaces -->
-      <input type="text" name="user_id" required placeholder="Enter your ID" class="box" maxlength="50" oninput="this.value = this.value.replace(/\s/g, '')">
-      
-      <!-- Input for password with validation to remove spaces -->
-      <input type="password" name="pass" required placeholder="Enter your password" class="box" maxlength="50" oninput="this.value = this.value.replace(/\s/g, '')">
-      
-      <!-- Submit button for the login form -->
-      <input type="submit" value="Login Now" name="submit" class="btn">
-   </form>
-
-</section>
-
-</body>
-</html>
