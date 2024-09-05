@@ -1,9 +1,9 @@
 <?php
 session_start();
-include 'phpqrcode/qrlib.php'; // Assuming you use the 'phpqrcode' library
+include '../phpqrcode/qrlib.php'; // Assuming you use the 'phpqrcode' library
 
 // Database connection
-include 'db.php';
+include '../db.php';
 
 // Check if the user is a teacher
 if ($_SESSION['role'] != 'teacher') {
@@ -33,8 +33,8 @@ $qr_content = json_encode([
 ]);
 
 // Generate the QR code image
-QRcode::png($qr_content, "qrcodes/{$qr_code_id}.png");
+QRcode::png($qr_content, "../qrcodes/{$qr_code_id}.png");
 
 // Display the QR code image
-echo "<img src='qrcodes/{$qr_code_id}.png' />";
+echo "<img src='../qrcodes/{$qr_code_id}.png' />";
 ?>

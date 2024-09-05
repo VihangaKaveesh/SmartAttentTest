@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include '../db.php';
 
 // Collect user credentials
 $username = $_POST['username'];
@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'teacher';
     $_SESSION['teacher_id'] = $row['teacher_id'];
     $_SESSION['name'] = $row['name'];
-    header("Location: Teacher-qr-generator.php");
+    header("Location: ../Teacher/Teacher-qr-generator.php");
     exit();
 }
 

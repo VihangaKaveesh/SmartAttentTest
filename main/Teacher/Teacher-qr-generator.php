@@ -3,7 +3,7 @@
 session_start();
 
 // Database connection
-include 'db.php';
+include '../db.php';
 
 // Check if the user is a teacher
 if ($_SESSION['role'] != 'teacher') {
