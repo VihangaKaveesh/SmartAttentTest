@@ -194,12 +194,12 @@ if (isset($_GET["action"]) && $_GET["action"] == "edit" && isset($_GET["id"])) {
             <input type="text" id="phone_number" name="phone_number" required>
 
             <label for="department">Department:</label>
-            <select id="department" name="department" required>
+            <select id="course" name="course" required>
                 <?php
                 $conn = connectDB();  // Connect to the database
-                $departments = fetchClasses($conn);  // Fetch department data from the "classes" table
-                foreach ($departments as $department) {
-                    echo '<option value="' . $department['department_id'] . '">' . htmlspecialchars($department['department_name'], ENT_QUOTES, 'UTF-8') . '</option>';
+                $classes = fetchClasses($conn);  // Fetch class data from the "classes" table
+                foreach ($classes as $class) {
+                    echo '<option value="' . $class['class_id'] . '">' . htmlspecialchars($class['class_name'], ENT_QUOTES, 'UTF-8') . '</option>';
                 }
                 $conn->close();  // Close the database connection
                 ?>
@@ -230,12 +230,12 @@ if (isset($_GET["action"]) && $_GET["action"] == "edit" && isset($_GET["id"])) {
             <input type="text" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($teacher['phone_number'], ENT_QUOTES, 'UTF-8'); ?>" required>
 
             <label for="department">Department:</label>
-            <select id="department" name="department" required>
+            <select id="course" name="course" required>
                 <?php
                 $conn = connectDB();  // Connect to the database
-                $departments = fetchClasses($conn);  // Fetch department data from the "classes" table
-                foreach ($departments as $department) {
-                    echo '<option value="' . $department['department_id'] . '" ' . ($department['department_id'] == $teacher['department'] ? 'selected' : '') . '>' . htmlspecialchars($department['department_name'], ENT_QUOTES, 'UTF-8') . '</option>';
+                $classes = fetchClasses($conn);  // Fetch class data from the "classes" table
+                foreach ($classes as $class) {
+                    echo '<option value="' . $class['class_id'] . '" ' . ($class['class_id'] == $student['course'] ? 'selected' : '') . '>' . htmlspecialchars($class['class_name'], ENT_QUOTES, 'UTF-8') . '</option>';
                 }
                 $conn->close();  // Close the database connection
                 ?>
