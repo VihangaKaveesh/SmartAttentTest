@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add_teacher"])) {
     $name = filter_var($_POST["name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $phoneno = filter_var($_POST["phone_number"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $course = $_POST["department"];  // Class ID selected from the dropdown
+    $course = $_POST["course"];  // Class ID selected from the dropdown
 
     // Perform form validations
     if (!preg_match("/^[a-zA-Z]+$/", $name)) {
