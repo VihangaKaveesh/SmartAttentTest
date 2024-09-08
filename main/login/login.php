@@ -55,4 +55,5 @@ if ($result->num_rows > 0) {
 }
 
 echo "Invalid username or password.";
+
 ?>
