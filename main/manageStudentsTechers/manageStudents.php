@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add_student"])) {
     $name = filter_var($_POST["name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $phoneno = filter_var($_POST["phone_number"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $course = $_POST["course"];  // Course ID selected from the dropdown
+    $course = isset($_POST["course"]) ? $_POST["course"] : '';  // Ensure $course is a string
 
     // Perform form validations
     if (!preg_match("/^[a-zA-Z]+$/", $name)) {
@@ -66,11 +66,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add_student"])) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             // Prepare the SQL statement for inserting the new student
-            $stmt = $conn->prepare("INSERT INTO students (username, password, name, email, phone_number, course) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssi", $username, $hashed_password, $name, $email, $phoneno, $course);
+            $stmt = $conn->prepare("INSERT INTO students (username, password, name, email, phone_number) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $username, $hashed_password, $name, $email, $phoneno);
 
             // Execute the query and provide feedback
             if ($stmt->execute()) {
+                // Get the inserted student_id
+                $student_id = $stmt->insert_id;
+
+                // Insert course associations
+                //if (!empty($course)) {
+                   //$stmt = $conn->prepare("INSERT INTO classes (student_id, class_id) VALUES (?, ?)");
+                   // $stmt->bind_param("ii", $student_id, $course);
+                    //$stmt->execute();
+               // }
                 echo "<p class='success'>Student added successfully.</p>";
             } else {
                 echo "<p class='error'>Error adding student: " . $stmt->error . "</p>";
@@ -91,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update_student"])) {
     $name = filter_var($_POST["name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $phoneno = filter_var($_POST["phone_number"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $course = $_POST["course"];  // Course ID selected from the dropdown
+    $course = isset($_POST["course"]) ? $_POST["course"] : '';  // Ensure $course is a string
 
     // Perform form validations
     if (!preg_match("/^[a-zA-Z]+$/", $name)) {
@@ -104,12 +113,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update_student"])) {
         $conn = connectDB();  // Connect to the database
 
         // Prepare the SQL statement for updating the student's data
-        $stmt = $conn->prepare("UPDATE students SET username = ?, password = ?, name = ?, email = ?, phone_number = ?, course = ? WHERE student_id = ?");
+        $stmt = $conn->prepare("UPDATE students SET username = ?, password = ?, name = ?, email = ?, phone_number = ? WHERE student_id = ?");
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);  // Hash the password
-        $stmt->bind_param("ssssiii", $username, $hashed_password, $name, $email, $phoneno, $course, $studentId);
+        $stmt->bind_param("ssssii", $username, $hashed_password, $name, $email, $phoneno, $studentId);
 
         // Execute the query and provide feedback
         if ($stmt->execute()) {
+            // Delete existing course associations
+            $stmt = $conn->prepare("DELETE FROM students WHERE student_id = ?");
+            $stmt->bind_param("i", $studentId);
+            $stmt->execute();
+
+            // Insert updated course associations
+           // if (!empty($course)) {
+               // $stmt = $conn->prepare("INSERT INTO classes (student_id, class_id) VALUES (?, ?)");
+               // $stmt->bind_param("ii", $studentId, $course);
+               // $stmt->execute();
+           // }
             echo "<p class='success'>Student updated successfully.</p>";
         } else {
             echo "<p class='error'>Error updating student: " . $stmt->error . "</p>";
@@ -147,7 +167,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "edit" && isset($_GET["id"])) {
     $conn = connectDB();  // Connect to the database
 
     // Prepare the SQL statement to retrieve the student's data
-    $stmt = $conn->prepare("SELECT student_id, username, password, name, email, phone_number, course FROM students WHERE student_id = ?");
+    $stmt = $conn->prepare("SELECT student_id, username, password, name, email, phone_number FROM students WHERE student_id = ?");
     $stmt->bind_param("i", $studentId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -169,81 +189,132 @@ if (isset($_GET["action"]) && $_GET["action"] == "edit" && isset($_GET["id"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management</title>
+    <title>Manage Students</title>
+    <style>
+        .success { color: green; }
+        .error { color: red; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Student Management</h1>
+    <h1>Manage Students</h1>
 
-        <!-- Form for adding a new student -->
-        <h2>Add New Student</h2>
-        <form action="manageStudents.php" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+    <!-- Form for adding a new student -->
+    <form method="POST" action="">
+        <h2>Add Student</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
 
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
 
-            <label for="phone_number">Contact No:</label>
-            <input type="text" id="phone_number" name="phone_number" required>
+        <label for="phone_number">Phone Number:</label>
+        <input type="tel" id="phone_number" name="phone_number" required>
+        <br>
 
-            <label for="course">Course:</label>
-            <select id="course" name="course" required>
-                <?php
-                $conn = connectDB();  // Connect to the database
-                $classes = fetchClasses($conn);  // Fetch class data from the "classes" table
-                foreach ($classes as $class) {
-                    echo '<option value="' . $class['class_id'] . '">' . htmlspecialchars($class['class_name'], ENT_QUOTES, 'UTF-8') . '</option>';
-                }
-                $conn->close();  // Close the database connection
-                ?>
-            </select>
+        <label for="course">Course:</label>
+        <select id="course" name="course">
+            <?php
+            $conn = connectDB();  // Connect to the database
+            $classes = fetchClasses($conn);  // Fetch class data
+            foreach ($classes as $class) {
+                echo "<option value='{$class['class_id']}'>{$class['class_name']}</option>";
+            }
+            $conn->close();  // Close the database connection
+            ?>
+        </select>
+        <br>
 
-            <button type="submit" name="add_student">Add Student</button>
-        </form>
+        <input type="submit" name="add_student" value="Add Student">
+    </form>
 
-        <!-- Form for updating an existing student -->
-        <?php if ($student): ?>
-        <h2>Edit Student</h2>
-        <form action="manageStudents.php" method="post">
-            <input type="hidden" name="student_id" value="<?php echo $student['student_id']; ?>">
+    <!-- Form for updating an existing student -->
+    <?php if ($student): ?>
+    <form method="POST" action="">
+        <h2>Update Student</h2>
+        <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($student['username']); ?>" required>
+        <br>
 
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($student['username'], ENT_QUOTES, 'UTF-8'); ?>" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+        <br>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" value="" required>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($student['name']); ?>" required>
+        <br>
 
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8'); ?>" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($student['email']); ?>" required>
+        <br>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($student['email'], ENT_QUOTES, 'UTF-8'); ?>" required>
+        <label for="phone_number">Phone Number:</label>
+        <input type="tel" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($student['phone_number']); ?>" required>
+        <br>
 
-            <label for="phone_number">Contact No:</label>
-            <input type="text" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($student['phone_number'], ENT_QUOTES, 'UTF-8'); ?>" required>
+        <label for="course">Course:</label>
+        <select id="course" name="course">
+            <?php
+            $conn = connectDB();  // Connect to the database
+            $classes = fetchClasses($conn);  // Fetch class data
+            foreach ($classes as $class) {
+                $selected = ($class['class_id'] == $student['course']) ? 'selected' : '';
+                echo "<option value='{$class['class_id']}' $selected>{$class['class_name']}</option>";
+            }
+            $conn->close();  // Close the database connection
+            ?>
+        </select>
+        <br>
 
-            <label for="course">Course:</label>
-            <select id="course" name="course" required>
-                <?php
-                $conn = connectDB();  // Connect to the database
-                $classes = fetchClasses($conn);  // Fetch class data from the "classes" table
-                foreach ($classes as $class) {
-                    echo '<option value="' . $class['class_id'] . '" ' . ($class['class_id'] == $student['course'] ? 'selected' : '') . '>' . htmlspecialchars($class['class_name'], ENT_QUOTES, 'UTF-8') . '</option>';
-                }
-                $conn->close();  // Close the database connection
-                ?>
-            </select>
+        <input type="submit" name="update_student" value="Update Student">
+    </form>
+    <?php endif; ?>
 
-            <button type="submit" name="update_student">Update Student</button>
-        </form>
-        <?php endif; ?>
-    </div>
+    <!-- Display list of students -->
+    <h2>Student List</h2>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Actions</th>
+        </tr>
+        <?php
+        $conn = connectDB();  // Connect to the database
+        $sql = "SELECT student_id, username, name, email, phone_number FROM students";
+        $result = $conn->query($sql);  // Execute the query
+
+        // Display each student in the table
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . htmlspecialchars($row['username']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['phone_number']) . "</td>";
+                echo "<td>
+                    <a href='?action=edit&id=" . htmlspecialchars($row['student_id']) . "'>Edit</a> |
+                    <a href='?action=delete&id=" . htmlspecialchars($row['student_id']) . "' onclick='return confirm(\"Are you sure?\")'>Delete</a>
+                </td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='5'>No students found</td></tr>";
+        }
+
+        $conn->close();  // Close the database connection
+        ?>
+    </table>
 </body>
 </html>
