@@ -15,7 +15,7 @@ $class_id = $_POST['class_id'];
 $geoLocation = $_POST['geoLocation'];
 $timestamp = time();
 
-// Calculate expiration time (1 minute from the time qr code is initiated)
+// Calculate expiration time (1 minute from the time QR code is initiated)
 $expiration_time = date('Y-m-d H:i:s', $timestamp + 60);
 
 // Store QR code data in the database
@@ -31,6 +31,11 @@ $qr_content = json_encode([
     'timestamp' => $timestamp,
     'geo_location' => $geoLocation
 ]);
+
+// Debug: Output QR content to ensure correctness
+echo "<pre>QR Content: ";
+print_r($qr_content);
+echo "</pre>";
 
 // Generate the QR code image
 QRcode::png($qr_content, "../qrcodes/{$qr_code_id}.png");
