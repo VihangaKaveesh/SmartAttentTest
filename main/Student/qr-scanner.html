@@ -34,7 +34,7 @@
         const output = document.getElementById('output');
         const ctx = canvas.getContext('2d');
 
-        // Get student's geolocation and store it in the hidden form field
+        // Function to get student's geolocation
         function getGeolocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
@@ -81,7 +81,7 @@
             requestAnimationFrame(tick); // Continue scanning
         }
 
-        // Start scanning and get location when page loads
+        // Start scanning and get location when the page loads
         getGeolocation();
         requestCameraPermissions();
     </script>
