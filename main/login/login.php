@@ -18,7 +18,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'student';
     $_SESSION['student_id'] = $row['student_id'];
     $_SESSION['name'] = $row['name'];
-    header("Location: student_dashboard.php");
+    header("Location: ../Student/qr-scanner.html");
     exit();
 }
 
