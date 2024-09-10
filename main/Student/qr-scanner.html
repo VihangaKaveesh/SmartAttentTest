@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <style>
+        video {
+            width: 100%;
+            height: auto;
+        }
+        #output {
+            font-size: 20px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div id="output">Scan a QR code</div>
+
+    <form id="qrForm" action="process-qr-scan.php" method="POST">
+        <input type="hidden" id="qr_data" name="qr_data">
+        <input type="hidden" id="geoLocation" name="geoLocation">
+    </form>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const output = document.getElementById('output');
+        const ctx = canvas.getContext('2d');
+
+        // Get student's geolocation and store it in the hidden form field
+        function getGeolocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById('geoLocation').value = position.coords.latitude + ',' + position.coords.longitude;
+                }, function(error) {
+                    alert("Error getting location: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Request camera permissions and start video feed
+        async function requestCameraPermissions() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = stream;
+                video.play();
+                tick(); // start the QR scanning process
+            } catch (error) {
+                console.error("Camera access denied or not supported", error);
+                alert("Please enable camera permissions in your browser settings.");
+            }
+        }
+
+        // Continuously scan the video stream for QR codes
+        function tick() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                if (code) {
+                    output.innerText = `QR Code detected: ${code.data}`;
+                    document.getElementById('qr_data').value = code.data; // Store QR data in the hidden field
+
+                    // Automatically submit the form to process-qr-scanner.php
+                    document.getElementById('qrForm').submit();
+                } else {
+                    output.innerText = "No QR code detected.";
+                }
+            }
+            requestAnimationFrame(tick); // Continue scanning
+        }
+
+        // Start scanning and get location when page loads
+        getGeolocation();
+        requestCameraPermissions();
+    </script>
+</body>
+</html>
