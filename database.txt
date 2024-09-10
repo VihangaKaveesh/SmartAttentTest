@@ -100,3 +100,4 @@ JOIN assignments a ON s.student_id = a.student_id
 JOIN classes c ON a.class_id = c.class_id;
 
 
+
