@@ -7,7 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         video {
-            width: 100%;
+            width: 80%;
+            align-items: center;
             height: auto;
         }
         #output {
@@ -69,11 +70,13 @@
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
                 if (code) {
+                    console.log("QR Code content:", code.data); // Debug QR code content
                     output.innerText = `QR Code detected: ${code.data}`;
                     document.getElementById('qr_data').value = code.data; // Store QR data in the hidden field
 
-                    // Automatically submit the form to process-qr-scanner.php
+                    // Automatically submit the form to process-qr-scan.php
                     document.getElementById('qrForm').submit();
+                    header("Location: process-qr-scan.php");
                 } else {
                     output.innerText = "No QR code detected.";
                 }
