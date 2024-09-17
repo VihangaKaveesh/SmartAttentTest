@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 10, 2024 at 04:53 PM
+-- Generation Time: Sep 15, 2024 at 07:01 AM
 -- Server version: 8.3.0
 -- PHP Version: 8.2.18
 
@@ -98,18 +98,17 @@ CREATE TABLE IF NOT EXISTS `attendance_analysis` (
 DROP TABLE IF EXISTS `classes`;
 CREATE TABLE IF NOT EXISTS `classes` (
   `class_id` int NOT NULL AUTO_INCREMENT,
-  `teacher_id` int NOT NULL,
   `class_name` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`class_id`),
-  KEY `teacher_id` (`teacher_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`class_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `classes`
 --
 
-INSERT INTO `classes` (`class_id`, `teacher_id`, `class_name`) VALUES
-(1, 1, '112 SE');
+INSERT INTO `classes` (`class_id`, `class_name`) VALUES
+(1, '112 SE'),
+(2, '114 SE');
 
 -- --------------------------------------------------------
 
@@ -163,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `qr_codes` (
   `expires_at` timestamp NOT NULL,
   PRIMARY KEY (`qr_code_id`),
   KEY `class_id` (`class_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `qr_codes`
@@ -184,7 +183,10 @@ INSERT INTO `qr_codes` (`qr_code_id`, `class_id`, `generated_at`, `geo_location`
 (16, 1, '2024-09-09 06:32:09', '', '2024-09-09 01:03:09'),
 (17, 1, '2024-09-09 06:59:00', '6.9270786,79.861243', '2024-09-09 01:30:00'),
 (29, 1, '2024-09-10 15:43:04', '6.9533696,79.8621696', '2024-09-10 10:14:04'),
-(30, 1, '2024-09-10 15:49:54', '6.9533696,79.8621696', '2024-09-10 10:20:54');
+(30, 1, '2024-09-10 15:49:54', '6.9533696,79.8621696', '2024-09-10 10:20:54'),
+(31, 1, '2024-09-10 16:57:40', '6.9964158,79.8997702', '2024-09-10 11:28:40'),
+(32, 1, '2024-09-10 17:02:18', '6.9964165,79.8997707', '2024-09-10 11:33:18'),
+(33, 1, '2024-09-10 17:10:51', '6.9964144,79.8997724', '2024-09-10 11:41:51');
 
 -- --------------------------------------------------------
 
@@ -203,14 +205,18 @@ CREATE TABLE IF NOT EXISTS `students` (
   `course` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`student_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `students`
 --
 
 INSERT INTO `students` (`student_id`, `username`, `password`, `name`, `email`, `phone_number`, `course`) VALUES
-(1, 'vihanga', 'vihanga@123', 'vihanga kaveesh', 'vihangapalliyage@gmail.com', '0770856229', 'software engineering');
+(2, 'Milusha', '$2y$10$eLsiFvTTXn6Pp.9YSzIjXOPck3/bB8Yy/F9k67Y8F0KNSnwHrU.n2', 'MilushaSilva', 'milushasilva003@gmail.com', '0775455867', '112 SE'),
+(3, 'Vihanga', '$2y$10$nOXoh2Gb1JJzvu8TxvL9JuzzeucY6dJMhC5rcIQSy2YKmxRDx0CrC', 'VihangaKaveesh', 'vihanga@gmail.com', '0775455855', '112 SE'),
+(4, 'Hashen', '$2y$10$6NgJrj/xIoGbeUZaJOEWC.mU0uN5JptEf5FIMdFqbuATgrTaZh.cS', 'MilushaSilva', 'milushasilva03@gmail.com', '0775455867', '112 SE'),
+(5, 'avishka123', '$2y$10$A/ZolKjibtX4nRc9H267mO2bUCI0cscdXfRJ9wK5WXxNvsMXCnOoW', 'AvishkaShashindu', 'avishka@gmail.com', '0775455866', '114 SE'),
+(6, 'Hiraj', '$2y$10$kMKrHQSIOmEu6eAU.NXhMeYDscFIN82j2k1tewzW/xb6UzxJU/FXu', 'HirajSilva', 'hiraj@gmail.com', '0775455866', '112 SE');
 
 -- --------------------------------------------------------
 
@@ -229,14 +235,42 @@ CREATE TABLE IF NOT EXISTS `teachers` (
   `phone_number` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`teacher_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `teachers`
 --
 
 INSERT INTO `teachers` (`teacher_id`, `username`, `password`, `name`, `department`, `email`, `phone_number`) VALUES
-(1, 'avishka123', 'avishka@123', 'avishka perera', NULL, 'avishka@gmail.com', '0777363631');
+(3, 'Milusha', '$2y$10$/gfzruQQTRCLCv4VASwIveN3ZlsUtsGq9A0Ndp8K7CB0ePFB.IFqq', 'MilushaSilva', '', 'milushasilva@gmail.com', '0775455867'),
+(4, 'Vihanga', '$2y$10$YPObm2HSZwc/c5CXGYUineLv8Ts5wPeInqhrJUPHqQkWZjQLC00wu', 'VihangaKaveesh', NULL, 'vihanga@gmail.com', '0775455855'),
+(5, 'Hashen', '$2y$10$A03AunhuRNy3kaG/a1MxRushEO4ObtTIXy/f68R9qLi4bxtDH5D.2', 'HashenSilva', NULL, 'hashen@gmail.com', '0775455867'),
+(7, 'avishka123', '$2y$10$HNyZUAax08Og4L9CwfX9/ueG.cCC3QB7S0mzE6eFaq9pf7xcFYyzq', 'AvishkaShashindu', NULL, 'avishkaa@gmail.com', '0775455855');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `teacher_courses`
+--
+
+DROP TABLE IF EXISTS `teacher_courses`;
+CREATE TABLE IF NOT EXISTS `teacher_courses` (
+  `teacher_id` int NOT NULL,
+  `class_id` int NOT NULL,
+  PRIMARY KEY (`teacher_id`,`class_id`),
+  KEY `class_id` (`class_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `teacher_courses`
+--
+
+INSERT INTO `teacher_courses` (`teacher_id`, `class_id`) VALUES
+(3, 1),
+(4, 1),
+(5, 1),
+(7, 1),
+(7, 2);
 
 -- --------------------------------------------------------
 
