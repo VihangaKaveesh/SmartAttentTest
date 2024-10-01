@@ -1,0 +1,61 @@
+CREATE TABLE Teachers (
+    TeacherID INT PRIMARY KEY AUTO_INCREMENT,
+    TeacherName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100),
+    Department VARCHAR(100)
+);
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    ModuleID INT,  -- This references the module the student is learning
+    FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID)
+);
+
+CREATE TABLE Modules (
+    ModuleID INT PRIMARY KEY AUTO_INCREMENT,
+    ModuleName VARCHAR(100) NOT NULL,
+    TeacherID INT,
+    FOREIGN KEY (TeacherID) REFERENCES Teachers(TeacherID)
+);
+CREATE TABLE Labs (
+    LabID INT PRIMARY KEY AUTO_INCREMENT,
+    LabName VARCHAR(100) NOT NULL,
+    Latitude DECIMAL(10, 8),
+    Longitude DECIMAL(11, 8)
+);
+CREATE TABLE Sessions (
+    SessionID INT PRIMARY KEY AUTO_INCREMENT,
+    TeacherID INT,
+    ModuleID INT,
+    LabID INT,
+    SessionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (TeacherID) REFERENCES Teachers(TeacherID),
+    FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID),
+    FOREIGN KEY (LabID) REFERENCES Labs(LabID)
+);
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY AUTO_INCREMENT,
+    StudentID INT,
+    SessionID INT,
+    Status ENUM('absent', 'present') DEFAULT 'absent',
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (SessionID) REFERENCES Sessions(SessionID)
+);
+CREATE TABLE LectureMaterials (
+    MaterialID INT PRIMARY KEY AUTO_INCREMENT,
+    ModuleID INT,
+    MaterialName VARCHAR(255),
+    FilePath VARCHAR(255),
+    UploadDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID)
+);
+CREATE TABLE Assignments (
+    AssignmentID INT PRIMARY KEY AUTO_INCREMENT,
+    ModuleID INT,
+    AssignmentName VARCHAR(255),
+    Description TEXT,
+    DueDate DATETIME,
+    FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID)
+);

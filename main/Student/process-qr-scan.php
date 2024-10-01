@@ -9,7 +9,7 @@ include '../db.php';
 
 // Ensure POST data is received
 if (isset($_POST['qr_data']) && isset($_POST['geoLocation'])) {
-    $qr_data = json_decode($_POST['qr_data'], true); // Decode the JSON QR data
+    $qr_data = json_decode($_POST['qr_data'], true); // Decode the JSON QR data 
 
     // Debug: output the QR data to ensure correct structure
     echo "<pre>QR Data: ";
