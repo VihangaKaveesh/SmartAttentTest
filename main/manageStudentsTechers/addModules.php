@@ -1,4 +1,5 @@
 <?php
+// Connect to the database
 function connectDB() {
     $servername = "localhost";
     $username = "root";
@@ -14,19 +15,19 @@ function connectDB() {
     return $conn;
 }
 
-// Function to check if a class name already exists
-function isClassNameExists($class_name, $class_id = null) {
+// Function to check if a module name already exists
+function isModuleNameExists($module_name, $module_id = null) {
     $conn = connectDB();
     $query = "SELECT module_id FROM modules WHERE module_name = ?";
     
-    // If updating, exclude the current class by ID
-    if ($class_id !== null) {
+    // If updating, exclude the current module by ID
+    if ($module_id !== null) {
         $query .= " AND module_id != ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("si", $class_name, $class_id);
+        $stmt->bind_param("si", $module_name, $module_id);
     } else {
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("s", $class_name);
+        $stmt->bind_param("s", $module_name);
     }
 
     $stmt->execute();
@@ -38,141 +39,178 @@ function isClassNameExists($class_name, $class_id = null) {
     return $exists;
 }
 
-// Initialize class variables
-$class_name = "";
-$class_id = null;
+// Fetch teachers from the database for the dropdown
+function getTeachers() {
+    $conn = connectDB();
+    $query = "SELECT teacher_id, name FROM teachers";
+    $result = $conn->query($query);
+    $teachers = [];
 
-// Handle adding a class
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add_class"])) {
-    $class_name = filter_var($_POST["class_name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    while ($row = $result->fetch_assoc()) {
+        $teachers[] = $row;
+    }
 
-    if (!empty($class_name)) {
-        if (isClassNameExists($class_name)) {
-            echo "<p class='error'>Class name already exists. Please choose a different name.</p>";
+    $conn->close();
+    return $teachers;
+}
+
+// Initialize module variables
+$module_name = "";
+$module_id = null;
+$teacher_id = null;
+
+// Handle adding a module
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["add_module"])) {
+    $module_name = filter_var($_POST["module_name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $teacher_id = $_POST["teacher_id"]; // Get the selected teacher ID
+
+    if (!empty($module_name) && !empty($teacher_id)) {
+        if (isModuleNameExists($module_name)) {
+            echo "<p class='error'>Module name already exists. Please choose a different name.</p>";
         } else {
             $conn = connectDB();
-            $stmt = $conn->prepare("INSERT INTO classes (class_name) VALUES (?)");
-            $stmt->bind_param("s", $class_name);
+            $stmt = $conn->prepare("INSERT INTO modules (module_name, teacher_id) VALUES (?, ?)");
+            $stmt->bind_param("si", $module_name, $teacher_id);
 
             if ($stmt->execute()) {
-                echo "<p class='success'>Class added successfully.</p>";
-                $class_name = ""; // Clear the class name after addition
+                echo "<p class='success'>Module added successfully.</p>";
+                $module_name = ""; // Clear the module name after addition
             } else {
-                echo "<p class='error'>Error adding class: " . $stmt->error . "</p>";
+                echo "<p class='error'>Error adding module: " . $stmt->error . "</p>";
             }
 
             $stmt->close();
             $conn->close();
         }
     } else {
-        echo "<p class='error'>Class name cannot be empty.</p>";
+        echo "<p class='error'>Module name and teacher selection cannot be empty.</p>";
     }
 }
 
-// Handle updating a class
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update_class"])) {
-    $class_id = $_POST["class_id"];
-    $class_name = filter_var($_POST["class_name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+// Handle updating a module
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["update_module"])) {
+    $module_id = $_POST["module_id"];
+    $module_name = filter_var($_POST["module_name"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $teacher_id = $_POST["teacher_id"];
 
-    if (!empty($class_name)) {
-        if (isClassNameExists($class_name, $class_id)) {
-            echo "<p class='error'>Class name already exists. Please choose a different name.</p>";
+    if (!empty($module_name) && !empty($teacher_id)) {
+        if (isModuleNameExists($module_name, $module_id)) {
+            echo "<p class='error'>Module name already exists. Please choose a different name.</p>";
         } else {
             $conn = connectDB();
-            $stmt = $conn->prepare("UPDATE classes SET class_name = ? WHERE class_id = ?");
-            $stmt->bind_param("si", $class_name, $class_id);
+            $stmt = $conn->prepare("UPDATE modules SET module_name = ?, teacher_id = ? WHERE module_id = ?");
+            $stmt->bind_param("sii", $module_name, $teacher_id, $module_id);
 
             if ($stmt->execute()) {
-                $message[] = 'Student updated successfully!';
-                // Redirect to reset the form to "Add Student" mode
-                header("Location: addClasses.php"); 
+                echo "<p class='success'>Module updated successfully.</p>";
+                header("Location: addModules.php"); // Redirect to reset the form to "Add Module" mode
                 exit(); // Exit after redirection
             } else {
-                $message[] = 'Error: Could not update student.';
+                echo "<p class='error'>Error updating module: " . $stmt->error . "</p>";
             }
+
             $stmt->close();
+            $conn->close();
         }
     } else {
-        echo "<p class='error'>Class name cannot be empty.</p>";
+        echo "<p class='error'>Module name and teacher selection cannot be empty.</p>";
     }
 }
 
-// Handle deleting a class
+// Handle deleting a module
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $class_id = $_GET['id'];
+    $module_id = $_GET['id'];
     
     $conn = connectDB();
-    $stmt = $conn->prepare("DELETE FROM classes WHERE class_id = ?");
-    $stmt->bind_param("i", $class_id);
+    $stmt = $conn->prepare("DELETE FROM modules WHERE module_id = ?");
+    $stmt->bind_param("i", $module_id);
     
     if ($stmt->execute()) {
-        echo "<p class='success'>Class deleted successfully.</p>";
+        echo "<p class='success'>Module deleted successfully.</p>";
     } else {
-        echo "<p class='error'>Error deleting class: " . $stmt->error . "</p>";
+        echo "<p class='error'>Error deleting module: " . $stmt->error . "</p>";
     }
 
     $stmt->close();
     $conn->close();
 }
 
-// Fetch the class if in edit mode
-$class_to_edit = null;
+// Fetch the module if in edit mode
+$module_to_edit = null;
 if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
-    $class_id = $_GET['id'];
+    $module_id = $_GET['id'];
     $conn = connectDB();
-    $stmt = $conn->prepare("SELECT * FROM classes WHERE class_id = ?");
-    $stmt->bind_param("i", $class_id);
+    $stmt = $conn->prepare("SELECT * FROM modules WHERE module_id = ?");
+    $stmt->bind_param("i", $module_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows == 1) {
-        $class_to_edit = $result->fetch_assoc();
-        // Set the class name to the value fetched from the database for editing
-        $class_name = $class_to_edit['class_name'];
+        $module_to_edit = $result->fetch_assoc();
+        // Set the module name to the value fetched from the database for editing
+        $module_name = $module_to_edit['module_name'];
+        $teacher_id = $module_to_edit['teacher_id'];
     }
     $stmt->close();
     $conn->close();
 }
 ?>
 
-<!-- Form to add or update a class -->
+<!-- Form to add or update a module -->
 <form action="" method="post">
-    <label for="class_name">Class Name:</label>
-    <input type="text" id="class_name" name="class_name" required value="<?php echo htmlspecialchars($class_name); ?>">
-    
-    <?php if ($class_to_edit): ?>
-        <input type="hidden" name="class_id" value="<?php echo htmlspecialchars($class_to_edit['class_id']); ?>">
-        <input type="submit" name="update_class" value="Update Class">
+    <label for="module_name">Module Name:</label>
+    <input type="text" id="module_name" name="module_name" required value="<?php echo htmlspecialchars($module_name); ?>">
+
+    <label for="teacher_id">Assign Teacher:</label>
+    <select id="teacher_id" name="teacher_id" required>
+        <option value="">Select a teacher</option>
+        <?php
+        // Populate the dropdown with teacher names
+        $teachers = getTeachers();
+        foreach ($teachers as $teacher) {
+            $selected = ($teacher_id == $teacher['teacher_id']) ? 'selected' : '';
+            echo "<option value='{$teacher['teacher_id']}' $selected>{$teacher['name']}</option>";
+        }
+        ?>
+    </select>
+
+    <?php if ($module_to_edit): ?>
+        <input type="hidden" name="module_id" value="<?php echo htmlspecialchars($module_to_edit['module_id']); ?>">
+        <input type="submit" name="update_module" value="Update Module">
     <?php else: ?>
-        <input type="submit" name="add_class" value="Add Class">
+        <input type="submit" name="add_module" value="Add Module">
     <?php endif; ?>
 </form>
 
-<!-- Display the list of classes with Edit and Delete options -->
-<h2>Classes List</h2>
+<!-- Display the list of modules with Edit and Delete options -->
+<h2>Modules List</h2>
 <table border="1">
     <tr>
         <th>ID</th>
-        <th>Class Name</th>
+        <th>Module Name</th>
+        <th>Assigned Teacher</th>
         <th>Actions</th>
     </tr>
     <?php
-    // Fetch and display the list of classes
+    // Fetch and display the list of modules
     $conn = connectDB();
-    $result = $conn->query("SELECT class_id, class_name FROM classes");
+    $result = $conn->query("SELECT m.module_id, m.module_name, t.name 
+                            FROM modules m 
+                            JOIN teachers t ON m.teacher_id = t.teacher_id");
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo '<tr>';
-            echo '<td>' . htmlspecialchars($row['class_id']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['class_name']) . '</td>';
+            echo '<td>' . htmlspecialchars($row['module_id']) . '</td>';
+            echo '<td>' . htmlspecialchars($row['module_name']) . '</td>';
+            echo '<td>' . htmlspecialchars($row['name']) . '</td>';
             echo '<td>';
-            echo '<a href="?action=edit&id=' . htmlspecialchars($row['class_id']) . '">Edit</a> | ';
-            echo '<a href="?action=delete&id=' . htmlspecialchars($row['class_id']) . '" onclick="return confirm(\'Are you sure you want to delete this class?\');">Delete</a>';
+            echo '<a href="?action=edit&id=' . htmlspecialchars($row['module_id']) . '">Edit</a> | ';
+            echo '<a href="?action=delete&id=' . htmlspecialchars($row['module_id']) . '" onclick="return confirm(\'Are you sure you want to delete this module?\');">Delete</a>';
             echo '</td>';
             echo '</tr>';
         }
     } else {
-        echo '<tr><td colspan="3">No classes found.</td></tr>';
+        echo '<tr><td colspan="4">No modules found.</td></tr>';
     }
 
     $conn->close();

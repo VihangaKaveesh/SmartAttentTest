@@ -18,7 +18,7 @@ function connectDB() {
     return $conn;  // Return the connection object
 }
 
-// Fetch classes from the database
+// Fetch modules from the database
 function fetchClasses($conn) {
     $classes = array();
     $result = $conn->query("SELECT module_name FROM modules");
@@ -30,6 +30,23 @@ function fetchClasses($conn) {
     }
 
     return $classes;
+}
+
+// Check if username or email already exists
+function isUsernameOrEmailExists($conn, $username, $email, $student_id = null) {
+    $query = "SELECT * FROM students WHERE (username = ? OR email = ?)";
+    if ($student_id) {
+        $query .= " AND student_id != ?";  // Exclude the current student in case of updates
+    }
+    $stmt = $conn->prepare($query);
+    if ($student_id) {
+        $stmt->bind_param("ssi", $username, $email, $student_id);
+    } else {
+        $stmt->bind_param("ss", $username, $email);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->num_rows > 0;
 }
 
 // Handle form submission for adding/updating students
@@ -48,6 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validate required fields
     if (empty($username) || empty($password) || empty($name) || empty($email) || empty($phone_number) || empty($course)) {
         $message[] = 'Error: All fields are required.';
+    } elseif (isUsernameOrEmailExists($conn, $username, $email, $student_id)) {
+        $message[] = 'Error: Username or Email already exists.';
     } else {
         if (isset($_POST['update_student'])) {
             // Update student
@@ -171,12 +190,12 @@ if (!empty($message)) {
         <option value="">Select Course</option>
         <?php
         $conn = connectDB();  // Connect to the database
-        $classes = fetchClasses($conn);  // Fetch classes for the dropdown
+        $classes = fetchClasses($conn);  // Fetch modules for the dropdown
 
         // Populate the course dropdown with options
         foreach ($classes as $class) {
-            $selected = (isset($student['course']) && $student['course'] == $class['class_name']) ? 'selected' : '';
-            echo '<option value="' . htmlspecialchars($class['class_name']) . '" ' . $selected . '>' . htmlspecialchars($class['class_name']) . '</option>';
+            $selected = (isset($student['course']) && $student['course'] == $class['module_name']) ? 'selected' : '';
+            echo '<option value="' . htmlspecialchars($class['module_name']) . '" ' . $selected . '>' . htmlspecialchars($class['module_name']) . '</option>';
         }
         $conn->close();  // Close the database connection
         ?>
@@ -201,7 +220,7 @@ if (!empty($message)) {
     $conn = connectDB();  // Connect to the database
     $result = $conn->query("SELECT student_id, username, name, email, phone_number, course FROM students");
 
-    // Loop through the results and display each student in a table row
+    // Loop through the results and display them
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo '<tr>';
@@ -212,15 +231,14 @@ if (!empty($message)) {
             echo '<td>' . htmlspecialchars($row['phone_number']) . '</td>';
             echo '<td>' . htmlspecialchars($row['course']) . '</td>';
             echo '<td>';
-            echo '<a href="?action=edit&id=' . htmlspecialchars($row['student_id']) . '">Edit</a> | ';
-            echo '<a href="?action=delete&id=' . htmlspecialchars($row['student_id']) . '" onclick="return confirm(\'Are you sure you want to delete this student?\');">Delete</a>';
+            echo '<a href="?action=edit&id=' . $row['student_id'] . '">Edit</a> | ';
+            echo '<a href="?action=delete&id=' . $row['student_id'] . '" onclick="return confirm(\'Are you sure?\')">Delete</a>';
             echo '</td>';
             echo '</tr>';
         }
     } else {
         echo '<tr><td colspan="7">No students found.</td></tr>';
     }
-
     $conn->close();  // Close the database connection
     ?>
 </table>

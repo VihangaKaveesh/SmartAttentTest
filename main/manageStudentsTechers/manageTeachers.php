@@ -18,13 +18,29 @@ function connectDB() {
     return $conn;  // Return the connection object
 }
 
+// Function to check if a username or email already exists (for both adding and updating)
+function isUsernameOrEmailExists($conn, $username, $email, $teacher_id = null) {
+    $query = "SELECT teacher_id FROM teachers WHERE (username = ? OR email = ?)";
+    if ($teacher_id) {
+        // Exclude the current teacher from the check (useful during update)
+        $query .= " AND teacher_id != ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssi", $username, $email, $teacher_id);
+    } else {
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $username, $email);
+    }
+    $stmt->execute();
+    $stmt->store_result();
+    return $stmt->num_rows > 0;
+}
 
 // Handle form submission for adding/updating teachers
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conn = connectDB();
     $message = [];
 
-    $student_id = isset($_POST['teacher_id']) ? $_POST['teacher_id'] : '';
+    $teacher_id = isset($_POST['teacher_id']) ? $_POST['teacher_id'] : '';
     $username = $_POST['username'];
     $password = $_POST['password'];  // No encryption applied here
     $name = $_POST['name'];
@@ -35,29 +51,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($username) || empty($password) || empty($name) || empty($email) || empty($phone_number)) {
         $message[] = 'Error: All fields are required.';
     } else {
-        if (isset($_POST['update_teacher'])) {
-            // Update teacher
-            $stmt = $conn->prepare("UPDATE teachers SET username = ?, password = ?, name = ?, email = ?, phone_number = ? WHERE teacher_id = ?");
-            $stmt->bind_param("sssssi", $username, $password, $name, $email, $phone_number, $student_id);
-            if ($stmt->execute()) {
-                $message[] = 'Teacher updated successfully!';
-                // Redirect to reset the form to "Add Teacher" mode
-                header("Location: manageTeachers.php"); 
-                exit(); // Exit after redirection
-            } else {
-                $message[] = 'Error: Could not update teacher.';
-            }
-            $stmt->close();
+        // Check if the username or email already exists
+        if (isUsernameOrEmailExists($conn, $username, $email, $teacher_id)) {
+            $message[] = 'Error: Username or Email already exists.';
         } else {
-            // Add new teacher
-            $stmt = $conn->prepare("INSERT INTO teachers (username, password, name, email, phone_number) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssss", $username, $password, $name, $email, $phone_number);
-            if ($stmt->execute()) {
-                $message[] = 'Teacher added successfully!';
+            if (isset($_POST['update_teacher'])) {
+                // Update teacher
+                $stmt = $conn->prepare("UPDATE teachers SET username = ?, password = ?, name = ?, email = ?, phone_number = ? WHERE teacher_id = ?");
+                $stmt->bind_param("sssssi", $username, $password, $name, $email, $phone_number, $teacher_id);
+                if ($stmt->execute()) {
+                    $message[] = 'Teacher updated successfully!';
+                    // Redirect to reset the form to "Add Teacher" mode
+                    header("Location: manageTeachers.php"); 
+                    exit(); // Exit after redirection
+                } else {
+                    $message[] = 'Error: Could not update teacher.';
+                }
+                $stmt->close();
             } else {
-                $message[] = 'Error: Could not add teacher.';
+                // Add new teacher
+                $stmt = $conn->prepare("INSERT INTO teachers (username, password, name, email, phone_number) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $username, $password, $name, $email, $phone_number);
+                if ($stmt->execute()) {
+                    $message[] = 'Teacher added successfully!';
+                } else {
+                    $message[] = 'Error: Could not add teacher.';
+                }
+                $stmt->close();
             }
-            $stmt->close();
         }
     }
 
@@ -192,7 +213,8 @@ if (!empty($message)) {
         echo '<tr><td colspan="7">No teachers found.</td></tr>';
     }
 
-    $conn->close();  // Close the database connection
+    // Close the database connection
+    $conn->close();
     ?>
 </table>
 
