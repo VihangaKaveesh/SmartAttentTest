@@ -1,18 +1,29 @@
 CREATE TABLE Teachers (
     TeacherID INT PRIMARY KEY AUTO_INCREMENT,
-    TeacherName VARCHAR(100) NOT NULL,
-    Email VARCHAR(100),
-    Department VARCHAR(100)
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL, -- Store hashed password
 );
 CREATE TABLE Students (
     StudentID INT PRIMARY KEY AUTO_INCREMENT,
     FirstName VARCHAR(100) NOT NULL,
     LastName VARCHAR(100) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
-    ModuleID INT,  -- This references the module the student is learning
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL, -- Store hashed password
+    ModuleID INT,  -- Reference to the module the student is learning
     FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID)
 );
-
+CREATE TABLE Management (
+    ManagementID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL -- Store hashed password
+);
 CREATE TABLE Modules (
     ModuleID INT PRIMARY KEY AUTO_INCREMENT,
     ModuleName VARCHAR(100) NOT NULL,
@@ -59,3 +70,14 @@ CREATE TABLE Assignments (
     DueDate DATETIME,
     FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID)
 );
+CREATE TABLE AssignmentMarks (
+    MarkID INT PRIMARY KEY AUTO_INCREMENT,
+    StudentID INT,
+    AssignmentID INT,
+    MarksObtained DECIMAL(5, 2),  -- Allows for decimal values, e.g., 95.50
+    Feedback TEXT,
+    SubmissionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (AssignmentID) REFERENCES Assignments(AssignmentID)
+);
+
