@@ -1,45 +1,63 @@
 <?php
+// generate-qr-code.php
 session_start();
-include '../phpqrcode/qrlib.php'; // Assuming you use the 'phpqrcode' library
 
 // Database connection
 include '../db.php';
 
-// Check if the user is a teacher
+// Ensure the teacher is logged in
 if ($_SESSION['role'] != 'teacher') {
     die("Access Denied");
 }
 
-// Get class details and geolocation
-$class_id = $_POST['class_id'];
-$geoLocation = $_POST['geoLocation'];
-$timestamp = time();
+// Get module and lab selections
+$module_id = $_POST['module_id'];
+$lab_id = $_POST['lab_id'];
+$teacher_id = $_SESSION['teacher_id'];
 
-// Calculate expiration time (1 minute from the time QR code is initiated)
-$expiration_time = date('Y-m-d H:i:s', $timestamp + 60);
-
-// Store QR code data in the database
-$query = "INSERT INTO qr_codes (class_id, geo_location, expires_at) VALUES (?, ?, ?)";
+// Fetch the lab's location
+$query = "SELECT Latitude, Longitude FROM Labs WHERE LabID = ?";
 $stmt = $conn->prepare($query);
-$stmt->bind_param("iss", $class_id, $geoLocation, $expiration_time);
+$stmt->bind_param("i", $lab_id);
 $stmt->execute();
-$qr_code_id = $stmt->insert_id;
+$lab_result = $stmt->get_result()->fetch_assoc();
 
-// QR code content 
-$qr_content = json_encode([
-    'class_id' => $class_id,
-    'timestamp' => $timestamp,
-    'geo_location' => $geoLocation
-]);
+if (!$lab_result) {
+    die("Lab not found.");
+}
 
-// Debug: Output QR content to ensure correctness
-echo "<pre>QR Content: ";
-print_r($qr_content);
-echo "</pre>";
+// Insert session details into the Sessions table
+$query = "INSERT INTO Sessions (TeacherID, ModuleID, LabID) VALUES (?, ?, ?)";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("iii", $teacher_id, $module_id, $lab_id);
 
-// Generate the QR code image
-QRcode::png($qr_content, "../qrcodes/{$qr_code_id}.png");
+if ($stmt->execute()) {
+    $session_id = $stmt->insert_id; // Get the newly created SessionID
 
-// Display the QR code image
-echo "<img src='../qrcodes/{$qr_code_id}.png' />";
+    // Generate QR code data with SessionID
+    $qr_data = [
+        'module_id' => $module_id,
+        'lab_id' => $lab_id,
+        'session_id' => $session_id, // Include the SessionID
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+
+    // Log QR data for debugging
+    error_log("QR Data for Code: " . json_encode($qr_data));
+
+    // Generate QR code using PHP QR Code library
+    include '../phpqrcode/qrlib.php'; // Adjusted path as necessary
+
+    // Set the path where the QR code will be saved
+    $qrCodeFilePath = '../qrcodes/qr-code.png';
+
+    // Generate the QR code image
+    QRcode::png(json_encode($qr_data), $qrCodeFilePath, QR_ECLEVEL_L, 10);
+
+    // Redirect or display the QR code image
+    echo "<img src='{$qrCodeFilePath}' alt='QR Code' />";
+    echo "Session recorded successfully! QR Code generated with SessionID: $session_id.";
+} else {
+    echo "Error recording session: " . $stmt->error;
+}
 ?>

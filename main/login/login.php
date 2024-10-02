@@ -7,7 +7,7 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 
 // Check student credentials
-$query = "SELECT student_id, name FROM students WHERE username = ? AND password = ?";
+$query = "SELECT StudentID, FirstName, LastName FROM students WHERE Username = ? AND Password = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
@@ -16,14 +16,14 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $_SESSION['role'] = 'student';
-    $_SESSION['student_id'] = $row['student_id'];
-    $_SESSION['name'] = $row['name'];
+    $_SESSION['student_id'] = $row['StudentID'];
+    $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
     header("Location: ../Student/qr-scanner.html");
     exit();
 }
 
 // Check teacher credentials
-$query = "SELECT teacher_id, name FROM teachers WHERE username = ? AND password = ?";
+$query = "SELECT TeacherID, FirstName, LastName FROM teachers WHERE Username = ? AND Password = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
@@ -32,14 +32,14 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $_SESSION['role'] = 'teacher';
-    $_SESSION['teacher_id'] = $row['teacher_id'];
-    $_SESSION['name'] = $row['name'];
+    $_SESSION['teacher_id'] = $row['TeacherID'];
+    $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
     header("Location: ../Teacher/Teacher-qr-generator.php");
     exit();
 }
 
 // Check management credentials
-$query = "SELECT management_id, name FROM management WHERE username = ? AND password = ?";
+$query = "SELECT ManagementID, FirstName, LastName FROM management WHERE Username = ? AND Password = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
@@ -48,12 +48,12 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $_SESSION['role'] = 'management';
-    $_SESSION['management_id'] = $row['management_id'];
-    $_SESSION['name'] = $row['name'];
+    $_SESSION['management_id'] = $row['ManagementID'];
+    $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
     header("Location: management_dashboard.php");
     exit();
 }
 
+// If no user found
 echo "Invalid username or password.";
-
 ?>
