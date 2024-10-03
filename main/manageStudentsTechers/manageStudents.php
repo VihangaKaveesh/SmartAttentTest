@@ -19,24 +19,24 @@ function connectDB() {
 }
 
 // Fetch modules from the database
-function fetchClasses($conn) {
-    $classes = array();
-    $result = $conn->query("SELECT module_name FROM modules");
+function fetchModules($conn) {
+    $modules = array();
+    $result = $conn->query("SELECT ModuleID, ModuleName FROM modules");
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $classes[] = $row;
+            $modules[] = $row;
         }
     }
 
-    return $classes;
+    return $modules;
 }
 
 // Check if username or email already exists
 function isUsernameOrEmailExists($conn, $username, $email, $student_id = null) {
-    $query = "SELECT * FROM students WHERE (username = ? OR email = ?)";
+    $query = "SELECT * FROM students WHERE (Username = ? OR Email = ?)";
     if ($student_id) {
-        $query .= " AND student_id != ?";  // Exclude the current student in case of updates
+        $query .= " AND StudentID != ?";  // Exclude the current student in case of updates
     }
     $stmt = $conn->prepare($query);
     if ($student_id) {
@@ -49,6 +49,11 @@ function isUsernameOrEmailExists($conn, $username, $email, $student_id = null) {
     return $result->num_rows > 0;
 }
 
+// Validate names to contain only letters
+function isValidName($name) {
+    return preg_match("/^[a-zA-Z]+$/", $name);
+}
+
 // Handle form submission for adding/updating students
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conn = connectDB();
@@ -57,21 +62,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $student_id = isset($_POST['student_id']) ? $_POST['student_id'] : '';
     $username = $_POST['username'];
     $password = $_POST['password'];  // No encryption applied here
-    $name = $_POST['name'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
     $email = $_POST['email'];
     $phone_number = $_POST['phone_number'];
-    $course = $_POST['course'];
+    $module_id = $_POST['course'];  // Store module_id now
 
     // Validate required fields
-    if (empty($username) || empty($password) || empty($name) || empty($email) || empty($phone_number) || empty($course)) {
+    if (empty($username) || empty($password) || empty($first_name) || empty($last_name) || empty($email) || empty($phone_number) || empty($module_id)) {
         $message[] = 'Error: All fields are required.';
+    } elseif (!isValidName($first_name)) {
+        $message[] = 'Error: First name can only contain letters.';
+    } elseif (!isValidName($last_name)) {
+        $message[] = 'Error: Last name can only contain letters.';
     } elseif (isUsernameOrEmailExists($conn, $username, $email, $student_id)) {
         $message[] = 'Error: Username or Email already exists.';
     } else {
         if (isset($_POST['update_student'])) {
             // Update student
-            $stmt = $conn->prepare("UPDATE students SET username = ?, password = ?, name = ?, email = ?, phone_number = ?, course = ? WHERE student_id = ?");
-            $stmt->bind_param("ssssssi", $username, $password, $name, $email, $phone_number, $course, $student_id);
+            $stmt = $conn->prepare("UPDATE students SET Username = ?, Password = ?, FirstName = ?, LastName = ?, Email = ?, PhoneNumber = ?, ModuleID = ? WHERE StudentID = ?");
+            $stmt->bind_param("ssssssii", $username, $password, $first_name, $last_name, $email, $phone_number, $module_id, $student_id);
             if ($stmt->execute()) {
                 $message[] = 'Student updated successfully!';
                 // Redirect to reset the form to "Add Student" mode
@@ -83,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->close();
         } else {
             // Add new student
-            $stmt = $conn->prepare("INSERT INTO students (username, password, name, email, phone_number, course) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssss", $username, $password, $name, $email, $phone_number, $course);
+            $stmt = $conn->prepare("INSERT INTO students (Username, Password, FirstName, LastName, Email, PhoneNumber, ModuleID) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssssi", $username, $password, $first_name, $last_name, $email, $phone_number, $module_id);
             if ($stmt->execute()) {
                 $message[] = 'Student added successfully!';
             } else {
@@ -101,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
     $conn = connectDB();
     $student_id = $_GET['id'];
-    $stmt = $conn->prepare("DELETE FROM students WHERE student_id = ?");
+    $stmt = $conn->prepare("DELETE FROM students WHERE StudentID = ?");
     $stmt->bind_param("i", $student_id);
     if ($stmt->execute()) {
         $message[] = 'Student deleted successfully!';
@@ -117,7 +127,7 @@ $student = null;
 if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     $conn = connectDB();
     $student_id = $_GET['id'];
-    $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt = $conn->prepare("SELECT * FROM students WHERE StudentID = ?");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -138,24 +148,55 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #FFE3B3;
+            color: #26648E;
+            padding: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #53D2DC;
+            color: #26648E;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #4F8FC0;
             padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #26648E;
+            color: #FFE3B3;
+        }
+        td {
+            background-color: #FFE3B3;
         }
         .message {
             color: green;
         }
         .error {
             color: red;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #4F8FC0;
+            border-radius: 4px;
+            background-color: #FFE3B3;
+            color: #26648E;
+        }
+        input[type="submit"] {
+            background-color: #26648E;
+            color: #FFE3B3;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #4F8FC0;
         }
     </style>
 </head>
@@ -174,73 +215,77 @@ if (!empty($message)) {
 
 <!-- Form for adding or updating a student -->
 <form method="POST">
-    <input type="hidden" name="student_id" value="<?php echo isset($student['student_id']) ? $student['student_id'] : ''; ?>">
+    <input type="hidden" name="student_id" value="<?php echo isset($student['StudentID']) ? $student['StudentID'] : ''; ?>">
     <label for="username">Username:</label>
-    <input type="text" name="username" required value="<?php echo isset($student['username']) ? htmlspecialchars($student['username']) : ''; ?>"><br>
+    <input type="text" name="username" required value="<?php echo isset($student['Username']) ? htmlspecialchars($student['Username']) : ''; ?>"><br>
     <label for="password">Password:</label>
-    <input type="password" name="password" required value="<?php echo isset($student['password']) ? htmlspecialchars($student['password']) : ''; ?>"><br>
-    <label for="name">Name:</label>
-    <input type="text" name="name" required value="<?php echo isset($student['name']) ? htmlspecialchars($student['name']) : ''; ?>"><br>
+    <input type="password" name="password" required value="<?php echo isset($student['Password']) ? htmlspecialchars($student['Password']) : ''; ?>"><br>
+    <label for="first_name">First Name:</label>
+    <input type="text" name="first_name" required value="<?php echo isset($student['FirstName']) ? htmlspecialchars($student['FirstName']) : ''; ?>"><br>
+    <label for="last_name">Last Name:</label>
+    <input type="text" name="last_name" required value="<?php echo isset($student['LastName']) ? htmlspecialchars($student['LastName']) : ''; ?>"><br>
     <label for="email">Email:</label>
-    <input type="email" name="email" required value="<?php echo isset($student['email']) ? htmlspecialchars($student['email']) : ''; ?>"><br>
+    <input type="email" name="email" required value="<?php echo isset($student['Email']) ? htmlspecialchars($student['Email']) : ''; ?>"><br>
     <label for="phone_number">Phone Number:</label>
-    <input type="text" name="phone_number" required value="<?php echo isset($student['phone_number']) ? htmlspecialchars($student['phone_number']) : ''; ?>"><br>
-    <label for="course">Course:</label>
+    <input type="text" name="phone_number" required value="<?php echo isset($student['PhoneNumber']) ? htmlspecialchars($student['PhoneNumber']) : ''; ?>"><br>
+    <label for="course">Module:</label>
     <select name="course" required>
-        <option value="">Select Course</option>
+        <option value="">Select Module</option>
         <?php
-        $conn = connectDB();  // Connect to the database
-        $classes = fetchClasses($conn);  // Fetch modules for the dropdown
-
-        // Populate the course dropdown with options
-        foreach ($classes as $class) {
-            $selected = (isset($student['course']) && $student['course'] == $class['module_name']) ? 'selected' : '';
-            echo '<option value="' . htmlspecialchars($class['module_name']) . '" ' . $selected . '>' . htmlspecialchars($class['module_name']) . '</option>';
+        $conn = connectDB();
+        $modules = fetchModules($conn);
+        $conn->close();
+        foreach ($modules as $module) {
+            echo '<option value="' . $module['ModuleID'] . '"';
+            if (isset($student['ModuleID']) && $student['ModuleID'] == $module['ModuleID']) {
+                echo ' selected';
+            }
+            echo '>' . htmlspecialchars($module['ModuleName']) . '</option>';
         }
-        $conn->close();  // Close the database connection
         ?>
     </select><br>
-    <input type="submit" name="<?php echo isset($student) ? 'update_student' : 'add_student'; ?>" value="<?php echo isset($student) ? 'Update Student' : 'Add Student'; ?>">
+    <input type="submit" value="<?php echo isset($student['StudentID']) ? 'Update Student' : 'Add Student'; ?>" name="<?php echo isset($student['StudentID']) ? 'update_student' : 'add_student'; ?>">
 </form>
 
-<!-- Table to display the list of students -->
-<h2>Students List</h2>
+<!-- Display list of students -->
+<h2>Student List</h2>
 <table>
-    <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-        <th>Course</th>
-        <th>Actions</th>
-    </tr>
-    <?php
-    // Fetch and display the list of students
-    $conn = connectDB();  // Connect to the database
-    $result = $conn->query("SELECT student_id, username, name, email, phone_number, course FROM students");
-
-    // Loop through the results and display them
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo '<tr>';
-            echo '<td>' . htmlspecialchars($row['student_id']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['username']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['name']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['email']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['phone_number']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['course']) . '</td>';
-            echo '<td>';
-            echo '<a href="?action=edit&id=' . $row['student_id'] . '">Edit</a> | ';
-            echo '<a href="?action=delete&id=' . $row['student_id'] . '" onclick="return confirm(\'Are you sure?\')">Delete</a>';
-            echo '</td>';
-            echo '</tr>';
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Module</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $conn = connectDB();
+        $result = $conn->query("SELECT s.*, m.ModuleName FROM students s LEFT JOIN modules m ON s.ModuleID = m.ModuleID");
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($row['Username']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['FirstName']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['LastName']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['Email']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['PhoneNumber']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['ModuleName']) . '</td>';
+                echo '<td>';
+                echo '<a href="manageStudents.php?action=edit&id=' . $row['StudentID'] . '">Edit</a> | ';
+                echo '<a href="manageStudents.php?action=delete&id=' . $row['StudentID'] . '" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+                echo '</td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr><td colspan="7">No students found.</td></tr>';
         }
-    } else {
-        echo '<tr><td colspan="7">No students found.</td></tr>';
-    }
-    $conn->close();  // Close the database connection
-    ?>
+        $conn->close();
+        ?>
+    </tbody>
 </table>
 
 </body>
