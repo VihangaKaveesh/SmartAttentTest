@@ -39,15 +39,16 @@ function isModuleNameExists($module_name, $module_id = null) {
     return $exists;
 }
 
-// Fetch teachers from the database for the dropdown
+// Fetch teachers from the database for the dropdown, combine FirstName and LastName
 function getTeachers() {
     $conn = connectDB();
-    $query = "SELECT TeacherID, name FROM teachers";
+    $query = "SELECT TeacherID, FirstName, LastName FROM teachers";
     $result = $conn->query($query);
     $teachers = [];
 
     while ($row = $result->fetch_assoc()) {
-        $teachers[] = $row;
+        $full_name = $row['FirstName'] . ' ' . $row['LastName'];
+        $teachers[] = ['TeacherID' => $row['TeacherID'], 'FullName' => $full_name];
     }
 
     $conn->close();
@@ -155,6 +156,71 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFE3B3;
+            color: #26648E;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #53D2DC;
+            color: #26648E;
+        }
+        th, td {
+            border: 1px solid #4F8FC0;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #26648E;
+            color: #FFE3B3;
+        }
+        td {
+            background-color: #FFE3B3;
+        }
+        .message {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #4F8FC0;
+            border-radius: 4px;
+            background-color: #FFE3B3;
+            color: #26648E;
+        }
+        input[type="submit"] {
+            background-color: #26648E;
+            color: #FFE3B3;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #4F8FC0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Manage Modules</h1>
+
 <!-- Form to add or update a module -->
 <form action="" method="post">
     <label for="ModuleName">Module Name:</label>
@@ -164,11 +230,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <select id="TeacherID" name="TeacherID" required>
         <option value="">Select a teacher</option>
         <?php
-        // Populate the dropdown with teacher names
+        // Populate the dropdown with full teacher names (FirstName LastName)
         $teachers = getTeachers();
         foreach ($teachers as $teacher) {
             $selected = ($teacher_id == $teacher['TeacherID']) ? 'selected' : '';
-            echo "<option value='{$teacher['TeacherID']}' $selected>{$teacher['name']}</option>";
+            echo "<option value='{$teacher['TeacherID']}' $selected>{$teacher['FullName']}</option>";
         }
         ?>
     </select>
@@ -193,7 +259,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <?php
     // Fetch and display the list of modules
     $conn = connectDB();
-    $result = $conn->query("SELECT m.ModuleID, m.ModuleName, t.FirstName 
+    $result = $conn->query("SELECT m.ModuleID, m.ModuleName, CONCAT(t.FirstName, ' ', t.LastName) AS FullName 
                             FROM modules m 
                             JOIN teachers t ON m.TeacherID = t.TeacherID");
 
@@ -202,7 +268,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
             echo '<tr>';
             echo '<td>' . htmlspecialchars($row['ModuleID']) . '</td>';
             echo '<td>' . htmlspecialchars($row['ModuleName']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['FirstName']) . '</td>';
+            echo '<td>' . htmlspecialchars($row['FullName']) . '</td>';
             echo '<td>';
             echo '<a href="?action=edit&id=' . htmlspecialchars($row['ModuleID']) . '">Edit</a> | ';
             echo '<a href="?action=delete&id=' . htmlspecialchars($row['ModuleID']) . '" onclick="return confirm(\'Are you sure you want to delete this module?\');">Delete</a>';

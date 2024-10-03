@@ -49,11 +49,6 @@ function isUsernameOrEmailExists($conn, $username, $email, $student_id = null) {
     return $result->num_rows > 0;
 }
 
-// Validate names to contain only letters
-function isValidName($name) {
-    return preg_match("/^[a-zA-Z]+$/", $name);
-}
-
 // Handle form submission for adding/updating students
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conn = connectDB();
@@ -71,10 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validate required fields
     if (empty($username) || empty($password) || empty($first_name) || empty($last_name) || empty($email) || empty($phone_number) || empty($module_id)) {
         $message[] = 'Error: All fields are required.';
-    } elseif (!isValidName($first_name)) {
-        $message[] = 'Error: First name can only contain letters.';
-    } elseif (!isValidName($last_name)) {
-        $message[] = 'Error: Last name can only contain letters.';
     } elseif (isUsernameOrEmailExists($conn, $username, $email, $student_id)) {
         $message[] = 'Error: Username or Email already exists.';
     } else {
@@ -144,7 +135,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management</title>
+    <title>Teacher Management</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -228,27 +219,26 @@ if (!empty($message)) {
     <input type="email" name="email" required value="<?php echo isset($student['Email']) ? htmlspecialchars($student['Email']) : ''; ?>"><br>
     <label for="phone_number">Phone Number:</label>
     <input type="text" name="phone_number" required value="<?php echo isset($student['PhoneNumber']) ? htmlspecialchars($student['PhoneNumber']) : ''; ?>"><br>
-    <label for="course">Module:</label>
+    <label for="course">Course:</label>
     <select name="course" required>
-        <option value="">Select Module</option>
+        <option value="">Select Course</option>
         <?php
-        $conn = connectDB();
-        $modules = fetchModules($conn);
-        $conn->close();
+        $conn = connectDB();  // Connect to the database
+        $modules = fetchModules($conn);  // Fetch modules for the dropdown
+
+        // Populate the course dropdown with options
         foreach ($modules as $module) {
-            echo '<option value="' . $module['ModuleID'] . '"';
-            if (isset($student['ModuleID']) && $student['ModuleID'] == $module['ModuleID']) {
-                echo ' selected';
-            }
-            echo '>' . htmlspecialchars($module['ModuleName']) . '</option>';
+            $selected = (isset($student['ModuleID']) && $student['ModuleID'] == $module['ModuleID']) ? 'selected' : '';
+            echo '<option value="' . htmlspecialchars($module['ModuleID']) . '" ' . $selected . '>' . htmlspecialchars($module['ModuleName']) . '</option>';
         }
         ?>
     </select><br>
-    <input type="submit" value="<?php echo isset($student['StudentID']) ? 'Update Student' : 'Add Student'; ?>" name="<?php echo isset($student['StudentID']) ? 'update_student' : 'add_student'; ?>">
+    
+    <input type="submit" name="<?php echo isset($student['StudentID']) ? 'update_student' : 'add_student'; ?>" value="<?php echo isset($student['StudentID']) ? 'Update Student' : 'Add Student'; ?>">
 </form>
 
-<!-- Display list of students -->
-<h2>Student List</h2>
+<!-- Table displaying students -->
+<h2>Existing Students</h2>
 <table>
     <thead>
         <tr>
@@ -257,14 +247,14 @@ if (!empty($message)) {
             <th>Last Name</th>
             <th>Email</th>
             <th>Phone Number</th>
-            <th>Module</th>
+            <th>Course</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         <?php
         $conn = connectDB();
-        $result = $conn->query("SELECT s.*, m.ModuleName FROM students s LEFT JOIN modules m ON s.ModuleID = m.ModuleID");
+        $result = $conn->query("SELECT * FROM students");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
@@ -273,11 +263,8 @@ if (!empty($message)) {
                 echo '<td>' . htmlspecialchars($row['LastName']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['Email']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['PhoneNumber']) . '</td>';
-                echo '<td>' . htmlspecialchars($row['ModuleName']) . '</td>';
-                echo '<td>';
-                echo '<a href="manageStudents.php?action=edit&id=' . $row['StudentID'] . '">Edit</a> | ';
-                echo '<a href="manageStudents.php?action=delete&id=' . $row['StudentID'] . '" onclick="return confirm(\'Are you sure?\')">Delete</a>';
-                echo '</td>';
+                echo '<td>' . htmlspecialchars($row['ModuleID']) . '</td>'; // Display ModuleID or module name as necessary
+                echo '<td><a href="?action=edit&id=' . $row['StudentID'] . '">Edit</a> | <a href="?action=delete&id=' . $row['StudentID'] . '" onclick="return confirm(\'Are you sure you want to delete this student?\')">Delete</a></td>';
                 echo '</tr>';
             }
         } else {

@@ -134,24 +134,55 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #FFE3B3;
+            color: #26648E;
+            padding: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #53D2DC;
+            color: #26648E;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #4F8FC0;
             padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #26648E;
+            color: #FFE3B3;
+        }
+        td {
+            background-color: #FFE3B3;
         }
         .message {
             color: green;
         }
         .error {
             color: red;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #4F8FC0;
+            border-radius: 4px;
+            background-color: #FFE3B3;
+            color: #26648E;
+        }
+        input[type="submit"] {
+            background-color: #26648E;
+            color: #FFE3B3;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #4F8FC0;
         }
     </style>
 </head>
@@ -188,10 +219,9 @@ if (!empty($message)) {
 </form>
 
 <!-- Table to display the list of teachers -->
-<h2>Teachers List</h2>
+<h2 style="color: #26648E;">Teacher List</h2>
 <table>
     <tr>
-        <th>Teacher ID</th>
         <th>Username</th>
         <th>First Name</th>
         <th>Last Name</th>
@@ -200,35 +230,26 @@ if (!empty($message)) {
         <th>Actions</th>
     </tr>
     <?php
-    // Fetch and display the list of teachers
-    $conn = connectDB();  // Connect to the database
-    $result = $conn->query("SELECT TeacherID, Username, FirstName, LastName, Email, PhoneNumber FROM teachers");
-
-    // Loop through the results and display each teacher in a table row
+    // Fetch all teachers from the database and display them in the table
+    $conn = connectDB();
+    $result = $conn->query("SELECT * FROM teachers");
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            echo '<tr>';
-            echo '<td>' . htmlspecialchars($row['TeacherID']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['Username']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['FirstName']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['LastName']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['Email']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['PhoneNumber']) . '</td>';
-            echo '<td>
-                    <a href="?action=edit&id=' . $row['TeacherID'] . '">Edit</a> | 
-                    <a href="?action=delete&id=' . $row['TeacherID'] . '" onclick="return confirm(\'Are you sure you want to delete this teacher?\');">Delete</a>
-                  </td>';
-            echo '</tr>';
+            echo "<tr>";
+            echo "<td>" . htmlspecialchars($row['Username']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['FirstName']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['LastName']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['Email']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['PhoneNumber']) . "</td>";
+            echo "<td><a href='?action=edit&id=" . $row['TeacherID'] . "'>Edit</a> | <a href='?action=delete&id=" . $row['TeacherID'] . "' onclick='return confirm(\"Are you sure you want to delete this teacher?\")'>Delete</a></td>";
+            echo "</tr>";
         }
     } else {
-        echo '<tr><td colspan="7">No teachers found.</td></tr>';
+        echo "<tr><td colspan='6'>No teachers found.</td></tr>";
     }
-
-    // Close the database connection
     $conn->close();
     ?>
 </table>
 
 </body>
 </html>
-
