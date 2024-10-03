@@ -71,7 +71,7 @@
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
                 if (code) {
                     console.log("QR Code content:", code.data); // Debug QR code content
-                    output.innerText = `QR Code detected: ${code.data}`;
+                    output.innerText = 'QR Code detected: ${code.data}';
                     document.getElementById('qr_data').value = code.data; // Store QR data in the hidden field
 
                     // Automatically submit the form to process-qr-scan.php
