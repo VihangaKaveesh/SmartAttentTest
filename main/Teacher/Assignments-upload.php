@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Set the timezone to Sri Lanka
+date_default_timezone_set('Asia/Colombo');
+
 // Check if the user is logged in as a teacher
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
     header("Location: ../login/login.html");
@@ -45,16 +48,22 @@ if (isset($_POST['submit'])) {
     $assignmentName = $_POST['assignmentName'];
     $description = $_POST['description'];
     $dueDate = $_POST['dueDate'];
-    $handOutDate = date('Y-m-d H:i:s'); // Current date and time for handout
+    $handOutDate = date('Y-m-d H:i:s'); // Current date and time for handout in Sri Lanka Time
 
     // Handle file upload
     $targetDir = "uploads/";
+
+    // Check if the uploads directory exists, create it if not
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true); // Create directory with permissions
+    }
+
     $fileName = basename($_FILES["assignment"]["name"]);
     $targetFilePath = $targetDir . $fileName;
     $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
     // Allow certain file formats
-    $allowedTypes = array("pdf", "doc", "docx", "zip");
+    $allowedTypes = array("pdf", "doc", "docx", "zip", "ppt", "txt", "xls"); // Added more file types
 
     if (in_array($fileType, $allowedTypes)) {
         // Upload the file to the server
@@ -75,7 +84,7 @@ if (isset($_POST['submit'])) {
             echo "Sorry, there was an error uploading your file.";
         }
     } else {
-        echo "Sorry, only PDF, DOC, DOCX, & ZIP files are allowed.";
+        echo "Sorry, only PDF, DOC, DOCX, ZIP, PPT, TXT, & XLS files are allowed.";
     }
 
     $conn->close();
