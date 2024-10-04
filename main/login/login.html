@@ -6,87 +6,119 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Login</title>
    <style>
-      /* General styles for the body */
+/* General body styling */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #e0f7fa; /* Light blue background for a calm feel */
     margin: 0;
     padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+    height: 100vh;
     display: flex;
-    justify-content: center; /* Center the form horizontally */
-    align-items: center; /* Center the form vertically */
-    height: 100vh; /* Full viewport height */
+    justify-content: center;
+    align-items: center;
 }
 
-/* Styles for the form container */
+/* Styling the section container */
 .form-container {
-    background-color: #ffffff; /* White background for the form */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
-    padding: 30px; /* Increased padding for a more spacious look */
-    width: 90%; /* Responsive width */
-    max-width: 400px; /* Maximum width of the form */
+    background: #fff;
+    padding: 5%;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    width: 30%;
+    max-width: 400px;
+    min-width: 280px;
+    text-align: center;
 }
 
-/* Styles for the form heading */
+/* Styling the form headings */
 h3 {
-    margin-bottom: 20px; /* Space below the heading */
-    text-align: center; /* Center the heading */
-    color: #00796b; /* Teal color for the heading */
-    font-size: 24px; /* Slightly larger font size for emphasis */
+    margin-bottom: 5%;
+    font-size: 2.2vw;
+    color: #333;
 }
 
-/* Styles for input fields */
+/* Styling the input fields */
 input[type="text"],
 input[type="password"] {
-    width: 100%; /* Full width of the form */
-    padding: 12px; /* Increased padding inside the input fields */
-    margin: 10px 0; /* Margin above and below the input fields */
-    border: 1px solid #b2dfdb; /* Soft teal border color */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 16px; /* Font size for input text */
-    transition: border-color 0.3s; /* Smooth transition for border color */
+    width: 90%;
+    padding: 4%;
+    margin: 5% 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.2vw;
+    transition: border-color 0.3s ease;
 }
 
-/* Input field focus effect */
+/* Adding focus effects on input fields */
 input[type="text"]:focus,
 input[type="password"]:focus {
-    border-color: #00796b; /* Darker teal border on focus */
-    outline: none; /* Remove default outline */
+    border-color: #74ebd5;
+    outline: none;
 }
 
-/* Styles for the submit button */
-.btn {
-    background-color: #00796b; /* Teal background color for the button */
-    color: white; /* White text color */
-    border: none; /* No border */
-    padding: 12px; /* Padding inside the button */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size for button text */
-    width: 100%; /* Full width of the button */
-    transition: background-color 0.3s; /* Smooth transition for background color */
+/* Styling the submit button */
+input[type="submit"] {
+    width: 90%;
+    padding: 4%;
+    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5vw;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
 }
 
-/* Styles for button on hover */
-.btn:hover {
-    background-color: #004d40; /* Darker teal on hover */
+/* Submit button hover effect */
+input[type="submit"]:hover {
+    background: linear-gradient(135deg, #ACB6E5 0%, #74ebd5 100%);
 }
 
-/* Responsive styles for smaller screens */
+/* Responsive styling for large devices (tablets) */
+@media (max-width: 1024px) {
+    .form-container {
+        width: 40%;
+    }
+    h3 {
+        font-size: 2.5vw;
+    }
+    input[type="text"], input[type="password"] {
+        font-size: 1.5vw;
+    }
+    input[type="submit"] {
+        font-size: 1.8vw;
+    }
+}
+
+/* Responsive styling for medium devices (phones) */
+@media (max-width: 768px) {
+    .form-container {
+        width: 50%;
+    }
+    h3 {
+        font-size: 4vw;
+    }
+    input[type="text"], input[type="password"] {
+        font-size: 2vw;
+    }
+    input[type="submit"] {
+        font-size: 2.5vw;
+    }
+}
+
+/* Responsive styling for small devices (small phones) */
 @media (max-width: 480px) {
     .form-container {
-        padding: 20px; /* Adjust padding for smaller screens */
+        width: 70%;
     }
-
     h3 {
-        font-size: 22px; /* Smaller heading size on small screens */
+        font-size: 5vw;
     }
-
-    input[type="text"],
-    input[type="password"],
-    .btn {
-        font-size: 14px; /* Smaller font size for inputs and button */
+    input[type="text"], input[type="password"] {
+        font-size: 3.5vw;
+    }
+    input[type="submit"] {
+        font-size: 3.8vw;
     }
 }
    </style>
