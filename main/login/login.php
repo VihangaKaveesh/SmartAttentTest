@@ -50,7 +50,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'management';
     $_SESSION['management_id'] = $row['ManagementID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: management_dashboard.php");
+    header("Location: ../Management/management_dashboard.html");
     exit();
 }
 
