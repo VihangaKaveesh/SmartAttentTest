@@ -17,16 +17,16 @@ if ($_SESSION['role'] != 'student') {
 $student_id = $_SESSION['student_id'];
 
 // Check for previous scans within 15 minutes
-// $current_time = date('Y-m-d H:i:s'); // Get current time
-// $check_query = "SELECT COUNT(*) FROM Attendance WHERE StudentID = ? AND SessionID = ? AND TIMESTAMPDIFF(MINUTE, AttendanceTime, ?) < 15"; // Query to check recent scans
-// $stmt = $conn->prepare($check_query);
-// $stmt->bind_param("iis", $student_id, $qr_data['session_id'], $current_time); // Bind parameters
-// $stmt->execute();
-// $count = $stmt->get_result()->fetch_row()[0]; // Fetch count of recent scans
+$current_time = date('Y-m-d H:i:s'); // Get current time
+$check_query = "SELECT COUNT(*) FROM Attendance WHERE StudentID = ? AND SessionID = ? AND TIMESTAMPDIFF(MINUTE, AttendanceTime, ?) < 15"; // Query to check recent scans
+$stmt = $conn->prepare($check_query);
+$stmt->bind_param("iis", $student_id, $qr_data['session_id'], $current_time); // Bind parameters
+$stmt->execute();
+$count = $stmt->get_result()->fetch_row()[0]; // Fetch count of recent scans
 
-// if ($count > 0) {
-//     die("You have already scanned a QR code in the last 15 minutes."); // Deny further scanning
-// }
+if ($count > 0) {
+    die("You have already scanned a QR code in the last 15 minutes."); // Deny further scanning
+}
 
 // Get QR data and geolocation from POST request
 $qr_data = json_decode($_POST['qr_data'], true); // Decode JSON data
