@@ -6,83 +6,89 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Login</title>
    <style>
-      /* Base styles */
-      body {
-         font-family: Arial, sans-serif;
-         background-color: #26648E;
-         color: #FFF;
-         margin: 0;
-         padding: 0;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         height: 100vh;
-      }
+      /* General styles for the body */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e0f7fa; /* Light blue background for a calm feel */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Center the form horizontally */
+    align-items: center; /* Center the form vertically */
+    height: 100vh; /* Full viewport height */
+}
 
-      .form-container {
-         background-color: #4f8fc0;
-         padding: 20px;
-         border-radius: 10px;
-         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-         width: 100%;
-         max-width: 400px;
-         box-sizing: border-box;
-         text-align: center;
-      }
+/* Styles for the form container */
+.form-container {
+    background-color: #ffffff; /* White background for the form */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
+    padding: 30px; /* Increased padding for a more spacious look */
+    width: 90%; /* Responsive width */
+    max-width: 400px; /* Maximum width of the form */
+}
 
-      h3 {
-         margin-bottom: 20px;
-         color: #FFE3B3;
-      }
+/* Styles for the form heading */
+h3 {
+    margin-bottom: 20px; /* Space below the heading */
+    text-align: center; /* Center the heading */
+    color: #00796b; /* Teal color for the heading */
+    font-size: 24px; /* Slightly larger font size for emphasis */
+}
 
-      .box {
-         width: 100%;
-         padding: 12px;
-         margin: 10px 0;
-         border: 2px solid #53D2DC;
-         border-radius: 5px;
-         background-color: #FFF;
-         color: #000;
-         box-sizing: border-box;
-      }
+/* Styles for input fields */
+input[type="text"],
+input[type="password"] {
+    width: 100%; /* Full width of the form */
+    padding: 12px; /* Increased padding inside the input fields */
+    margin: 10px 0; /* Margin above and below the input fields */
+    border: 1px solid #b2dfdb; /* Soft teal border color */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size for input text */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
 
-      .btn {
-         background-color: #53D2DC;
-         border: none;
-         padding: 12px;
-         color: #FFF;
-         border-radius: 5px;
-         cursor: pointer;
-         width: 100%;
-         margin-top: 10px;
-      }
+/* Input field focus effect */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #00796b; /* Darker teal border on focus */
+    outline: none; /* Remove default outline */
+}
 
-      .btn:hover {
-         background-color: #26648E;
-      }
+/* Styles for the submit button */
+.btn {
+    background-color: #00796b; /* Teal background color for the button */
+    color: white; /* White text color */
+    border: none; /* No border */
+    padding: 12px; /* Padding inside the button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for button text */
+    width: 100%; /* Full width of the button */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
 
-      /* Responsive styles */
-      @media (max-width: 768px) {
-         .form-container {
-            width: 90%;
-         }
-      }
+/* Styles for button on hover */
+.btn:hover {
+    background-color: #004d40; /* Darker teal on hover */
+}
 
-      @media (max-width: 480px) {
-         h3 {
-            font-size: 1.5rem;
-         }
-         
-         .box {
-            font-size: 1rem;
-            padding: 10px;
-         }
-         
-         .btn {
-            font-size: 1rem;
-            padding: 10px;
-         }
-      }
+/* Responsive styles for smaller screens */
+@media (max-width: 480px) {
+    .form-container {
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+
+    h3 {
+        font-size: 22px; /* Smaller heading size on small screens */
+    }
+
+    input[type="text"],
+    input[type="password"],
+    .btn {
+        font-size: 14px; /* Smaller font size for inputs and button */
+    }
+}
    </style>
 </head>
 <body>

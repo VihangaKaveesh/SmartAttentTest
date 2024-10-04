@@ -1,21 +1,27 @@
 <?php
+session_start();
 
-// Function to connect to the database
+// Check if the user is logged in as management
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
+    // If not logged in or not management, redirect to the login page
+    header("Location: ../login/login.html");
+    exit();
+}
+
+// Connect to the database
 function connectDB() {
     $servername = "localhost";
     $username = "root";
     $password = "";
     $dbname = "smartattendtest";
 
-    // Create a new connection object
     $conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Check if connection was successful
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    return $conn;  // Return the connection object
+    return $conn;
 }
 
 // Fetch modules from the database
