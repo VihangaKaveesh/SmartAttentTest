@@ -29,6 +29,93 @@ $labs_result = $stmt->get_result();
 <html>
 <head>
     <title>Generate QR Code</title>
+    <style>
+        /* General styles for the form */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
+    form {
+        padding: 15px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    select, button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+/* Styles for larger screens (tablets and desktops) */
+@media (min-width: 600px) and (max-width: 900px) {
+    form {
+        max-width: 600px;
+    }
+}
+
+@media (min-width: 900px) {
+    form {
+        max-width: 500px;
+    }
+
+    button {
+        font-size: 16px;
+    }
+}
+    </style>
 </head>
 <body>
     <form action="generate-qr-code.php" method="POST">

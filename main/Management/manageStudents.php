@@ -229,22 +229,22 @@ if (!empty($message)) {
     <select name="course" required>
         <option value="">Select Course</option>
         <?php
-        $conn = connectDB();  // Connect to the database
-        $modules = fetchModules($conn);  // Fetch modules for the dropdown
-
-        // Populate the course dropdown with options
+        $conn = connectDB();
+        $modules = fetchModules($conn);
         foreach ($modules as $module) {
-            $selected = (isset($student['ModuleID']) && $student['ModuleID'] == $module['ModuleID']) ? 'selected' : '';
-            echo '<option value="' . htmlspecialchars($module['ModuleID']) . '" ' . $selected . '>' . htmlspecialchars($module['ModuleName']) . '</option>';
+            echo '<option value="' . htmlspecialchars($module['ModuleID']) . '"';
+            if (isset($student['ModuleID']) && $student['ModuleID'] == $module['ModuleID']) {
+                echo ' selected';
+            }
+            echo '>' . htmlspecialchars($module['ModuleName']) . '</option>';
         }
+        $conn->close();
         ?>
     </select><br>
-    
     <input type="submit" name="<?php echo isset($student['StudentID']) ? 'update_student' : 'add_student'; ?>" value="<?php echo isset($student['StudentID']) ? 'Update Student' : 'Add Student'; ?>">
 </form>
 
-<!-- Table displaying students -->
-<h2>Existing Students</h2>
+<!-- Display students table -->
 <table>
     <thead>
         <tr>
@@ -253,14 +253,15 @@ if (!empty($message)) {
             <th>Last Name</th>
             <th>Email</th>
             <th>Phone Number</th>
-            <th>Course</th>
+            <th>Module</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         <?php
         $conn = connectDB();
-        $result = $conn->query("SELECT * FROM students");
+        $result = $conn->query("SELECT students.*, modules.ModuleName FROM students LEFT JOIN modules ON students.ModuleID = modules.ModuleID");
+
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
@@ -269,13 +270,18 @@ if (!empty($message)) {
                 echo '<td>' . htmlspecialchars($row['LastName']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['Email']) . '</td>';
                 echo '<td>' . htmlspecialchars($row['PhoneNumber']) . '</td>';
-                echo '<td>' . htmlspecialchars($row['ModuleID']) . '</td>'; // Display ModuleID or module name as necessary
-                echo '<td><a href="?action=edit&id=' . $row['StudentID'] . '">Edit</a> | <a href="?action=delete&id=' . $row['StudentID'] . '" onclick="return confirm(\'Are you sure you want to delete this student?\')">Delete</a></td>';
+                echo '<td>' . htmlspecialchars($row['ModuleName']) . '</td>';
+                echo '<td>
+                    <a href="?action=edit&id=' . $row['StudentID'] . '">Edit</a> | 
+                    <a href="?action=delete&id=' . $row['StudentID'] . '" onclick="return confirm(\'Are you sure you want to delete this student?\')">Delete</a> | 
+                    <a href="attendanceAnalysis.php?student_id=' . $row['StudentID'] . '">View Attendance</a>
+                </td>';
                 echo '</tr>';
             }
         } else {
             echo '<tr><td colspan="7">No students found.</td></tr>';
         }
+
         $conn->close();
         ?>
     </tbody>
