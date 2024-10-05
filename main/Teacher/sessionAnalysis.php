@@ -40,19 +40,20 @@ function fetchTeacherSessions($conn, $teacher_id) {
 }
 
 // Fetch session details and attendance data for the selected session
-function fetchSessionAttendance($conn, $session_id) {
+// Fetch session details and attendance data for the selected session
+function fetchSessionAttendance($conn, $session_id, $module_id) {
     $query = "
         SELECT 
-            st.FirstName, st.LastName, a.Status 
+            st.FirstName, st.LastName, IFNULL(a.Status, 'absent') AS Status
         FROM 
-            Attendance a
-        JOIN 
-            Students st ON a.StudentID = st.StudentID
+            Students st
+        LEFT JOIN 
+            Attendance a ON st.StudentID = a.StudentID AND a.SessionID = ?
         WHERE 
-            a.SessionID = ?";
-    
+            st.ModuleID = ?";
+
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $session_id);
+    $stmt->bind_param("ii", $session_id, $module_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -62,6 +63,7 @@ function fetchSessionAttendance($conn, $session_id) {
     }
     return $attendance_data;
 }
+
 
 // Fetch total number of students enrolled in the module for the session
 function fetchTotalStudentsInModule($conn, $module_id) {
@@ -104,7 +106,8 @@ if ($session_id > 0) {
     $lab_name = $conn->query("SELECT LabName FROM Labs WHERE LabID = {$session_details['LabID']}")->fetch_assoc()['LabName'];
     $session_date = $session_details['SessionDate'];
 
-    $attendance_data = fetchSessionAttendance($conn, $session_id);
+    // Fetch attendance data with all students for the selected session
+    $attendance_data = fetchSessionAttendance($conn, $session_id, $module_id);
     $total_students = fetchTotalStudentsInModule($conn, $module_id);
 
     // Calculate attendance percentage
