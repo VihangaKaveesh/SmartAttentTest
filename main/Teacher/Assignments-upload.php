@@ -1,14 +1,4 @@
 <?php
-session_start();
-
-// Set the timezone to Sri Lanka
-date_default_timezone_set('Asia/Colombo');
-
-// Check if the user is logged in as a teacher
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
-    header("Location: ../login/login.html");
-    exit();
-}
 
 // Function to connect to the database
 function connectDB() {
@@ -17,8 +7,10 @@ function connectDB() {
     $password = "";
     $dbname = "smartattendtest";
 
+    // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
 
+    // Check connection
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
@@ -26,9 +18,9 @@ function connectDB() {
     return $conn;
 }
 
-// Fetch module names and IDs from the modules table
+// Function to fetch modules
 function getModules($conn) {
-    $sql = "SELECT ModuleID, ModuleName FROM modules"; // Adjust as necessary for your modules table
+    $sql = "SELECT ModuleID, ModuleName FROM modules"; // Replace 'modules' with your actual table name
     $result = $conn->query($sql);
 
     $modules = [];
@@ -40,92 +32,101 @@ function getModules($conn) {
     return $modules;
 }
 
-// Check if the form is submitted
+// Check if file is uploaded
 if (isset($_POST['submit'])) {
-    $conn = connectDB();
-    
-    $moduleID = $_POST['moduleID'];
-    $assignmentName = $_POST['assignmentName'];
-    $description = $_POST['description'];
-    $dueDate = $_POST['dueDate'];
-    $handOutDate = date('Y-m-d H:i:s'); // Current date and time for handout in Sri Lanka Time
+    $conn = connectDB(); // Call the connectDB() function to establish the connection
 
-    // Handle file upload
     $targetDir = "uploads/";
+    $targetFile = $targetDir . basename($_FILES["pdfFile"]["name"]);
+    $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-    // Check if the uploads directory exists, create it if not
-    if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0755, true); // Create directory with permissions
-    }
-
-    $fileName = basename($_FILES["assignment"]["name"]);
-    $targetFilePath = $targetDir . $fileName;
-    $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-
-    // Only allow PDF files for assignment uploads
-    if ($fileType === "pdf" && $_FILES["assignment"]["size"] <= 10000000) {
-        // Upload the file to the server
-        if (move_uploaded_file($_FILES["assignment"]["tmp_name"], $targetFilePath)) {
-            // Insert assignment data into the database
-            $sql = "INSERT INTO assignments (ModuleID, AssignmentName, Description, DueDate, Assignment, HandOutDate)
-                    VALUES (?, ?, ?, ?, ?, ?)";
-
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isssss", $moduleID, $assignmentName, $description, $dueDate, $targetFilePath, $handOutDate);
-
-            if ($stmt->execute()) {
-                echo "Assignment uploaded successfully.";
-            } else {
-                echo "Error: " . $stmt->error;
-            }
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-        }
+    // Check if file is a PDF and less than 10MB
+    if ($fileType != "pdf" || $_FILES["pdfFile"]["size"] > 10000000) {
+        echo "Error: Only PDF files less than 10MB are allowed to upload.";
     } else {
-        echo "Error: Only PDF files less than 10MB are allowed.";
-    }
+        // Move uploaded file to uploads folder
+        if (move_uploaded_file($_FILES["pdfFile"]["tmp_name"], $targetFile)) {
+            // Insert file information into database
+            $filename = $_FILES["pdfFile"]["name"];
+            $folder_path = $targetDir;
+            $handOutDate = date('Y-m-d H:i:s', strtotime('+5 hours 30 minutes')); // Sri Lanka Time (UTC+5:30)
 
-    $conn->close();
+            // Get selected ModuleID and other details
+            $moduleID = intval($_POST['module']); // Sanitize input
+            $assignmentName = $conn->real_escape_string($_POST['assignmentName']); // Sanitize input
+            $dueDate = $conn->real_escape_string($_POST['dueDate']); // Sanitize input
+
+            // Insert query
+            $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate)
+                    VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate')";
+
+            if ($conn->query($sql) === TRUE) {
+                echo "File uploaded and assignment created successfully.";
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
+            }
+
+            $conn->close(); // Close the connection after the query
+        } else {
+            echo "Error uploading file.";
+        }
+    }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>PDF Upload Form</title>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Assignment</title>
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <h2>Upload Assignment</h2>
-    <form action="" method="POST" enctype="multipart/form-data">
-        <label for="moduleID">Select Module:</label>
-        <select name="moduleID" required>
-            <option value="">Select Module</option>
-            <?php
-            $conn = connectDB();
-            $modules = getModules($conn);
-            foreach ($modules as $module) {
-                echo "<option value='" . $module['ModuleID'] . "'>" . $module['ModuleName'] . "</option>";
-            }
-            $conn->close();
-            ?>
-        </select><br><br>
+    <div class="container d-flex justify-content-center align-items-center" style="height:100vh">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title text-center">Upload PDF File for Assignment</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="module">Select Module:</label>
+                        <select name="module" class="form-control" id="module" required>
+                            <option value="">Select a module</option>
+                            <?php
+                            $conn = connectDB(); // Call the connectDB() function
+                            $modules = getModules($conn); // Get the list of modules
+                            foreach ($modules as $module) {
+                                echo "<option value='" . $module['ModuleID'] . "'>" . $module['ModuleName'] . "</option>";
+                            }
+                            $conn->close(); // Close the connection
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentName">Assignment Name:</label>
+                        <input type="text" name="assignmentName" class="form-control" id="assignmentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Due Date:</label>
+                        <input type="datetime-local" name="dueDate" class="form-control" id="dueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdfFile">Select PDF File:</label>
+                        <input type="file" name="pdfFile" class="form-control-file" id="pdfFile" required>
+                    </div>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block">Upload File</button>
+                    <button type="reset" class="btn btn-warning btn-block">Reset</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        <label for="assignmentName">Assignment Name:</label>
-        <input type="text" name="assignmentName" required><br><br>
-
-        <label for="description">Description:</label>
-        <textarea name="description" required></textarea><br><br>
-
-        <label for="dueDate">Due Date:</label>
-        <input type="datetime-local" name="dueDate" required><br><br>
-
-        <label for="assignment">Upload Assignment (PDF only):</label>
-        <input type="file" name="assignment" accept=".pdf" required><br><br>
-
-        <input type="submit" name="submit" value="Upload">
-    </form>
+    <!--Bootstrap JS-->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
