@@ -18,7 +18,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'student';
     $_SESSION['student_id'] = $row['StudentID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Student/qr-scanner.html");
+    header("Location: ../Student/Student_Dashboard.html");
     exit();
 }
 
@@ -50,7 +50,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'management';
     $_SESSION['management_id'] = $row['ManagementID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Management/management_dashboard.php");
+    header("Location: management_dashboard.php");
     exit();
 }
 
