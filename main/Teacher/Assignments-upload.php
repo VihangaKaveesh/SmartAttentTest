@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+// Check if the user is logged in as a student
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
+    header("Location: ../login/login.html");
+    exit();
+}
 
 // Function to connect to the database
 function connectDB() {
