@@ -10,7 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
     exit();
 }
 
-// Connect to the database
+// Function to connect to the database
 function connectDB() {
     $servername = "localhost";
     $username = "root";
@@ -62,10 +62,8 @@ if (isset($_POST['submit'])) {
     $targetFilePath = $targetDir . $fileName;
     $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
-    // Allow certain file formats
-    $allowedTypes = array("pdf", "doc", "docx", "zip", "ppt", "txt", "xls"); // Added more file types
-
-    if (in_array($fileType, $allowedTypes)) {
+    // Only allow PDF files for assignment uploads
+    if ($fileType === "pdf" && $_FILES["assignment"]["size"] <= 10000000) {
         // Upload the file to the server
         if (move_uploaded_file($_FILES["assignment"]["tmp_name"], $targetFilePath)) {
             // Insert assignment data into the database
@@ -84,7 +82,7 @@ if (isset($_POST['submit'])) {
             echo "Sorry, there was an error uploading your file.";
         }
     } else {
-        echo "Sorry, only PDF, DOC, DOCX, ZIP, PPT, TXT, & XLS files are allowed.";
+        echo "Error: Only PDF files less than 10MB are allowed.";
     }
 
     $conn->close();
@@ -124,8 +122,8 @@ if (isset($_POST['submit'])) {
         <label for="dueDate">Due Date:</label>
         <input type="datetime-local" name="dueDate" required><br><br>
 
-        <label for="assignment">Upload Assignment:</label>
-        <input type="file" name="assignment" required><br><br>
+        <label for="assignment">Upload Assignment (PDF only):</label>
+        <input type="file" name="assignment" accept=".pdf" required><br><br>
 
         <input type="submit" name="submit" value="Upload">
     </form>
