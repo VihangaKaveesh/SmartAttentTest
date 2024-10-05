@@ -256,38 +256,39 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <?php endif; ?>
 </form>
 
-<!-- Display the list of modules with Edit and Delete options -->
-<h2>Modules List</h2>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Module Name</th>
-        <th>Assigned Teacher</th>
-        <th>Actions</th>
-    </tr>
-    <?php
-    // Fetch and display the list of modules
-    $conn = connectDB();
-    $result = $conn->query("SELECT m.ModuleID, m.ModuleName, CONCAT(t.FirstName, ' ', t.LastName) AS FullName 
-                            FROM modules m 
-                            JOIN teachers t ON m.TeacherID = t.TeacherID");
+<!-- Display modules table -->
+<table>
+    <thead>
+        <tr>
+            <th>Module Name</th>
+            <th>Teacher</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $conn = connectDB();
+        $result = $conn->query("SELECT modules.ModuleID, modules.ModuleName, CONCAT(teachers.FirstName, ' ', teachers.LastName) AS TeacherName FROM modules LEFT JOIN teachers ON modules.TeacherID = teachers.TeacherID");
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo '<tr>';
-            echo '<td>' . htmlspecialchars($row['ModuleID']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['ModuleName']) . '</td>';
-            echo '<td>' . htmlspecialchars($row['FullName']) . '</td>';
-            echo '<td>';
-            echo '<a href="?action=edit&id=' . htmlspecialchars($row['ModuleID']) . '">Edit</a> | ';
-            echo '<a href="?action=delete&id=' . htmlspecialchars($row['ModuleID']) . '" onclick="return confirm(\'Are you sure you want to delete this module?\');">Delete</a>';
-            echo '</td>';
-            echo '</tr>';
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($row['ModuleName']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['TeacherName']) . '</td>';
+                echo '<td>
+                    <a href="?action=edit&id=' . $row['ModuleID'] . '">Edit</a> | 
+                    <a href="?action=delete&id=' . $row['ModuleID'] . '" onclick="return confirm(\'Are you sure you want to delete this module?\')">Delete</a> | 
+                    <a href="marksAnalysis.php?module_id=' . $row['ModuleID'] . '">View Marks Analysis</a>
+                </td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr><td colspan="3">No modules found.</td></tr>';
         }
-    } else {
-        echo '<tr><td colspan="4">No modules found.</td></tr>';
-    }
 
-    $conn->close();
-    ?>
+        $conn->close();
+        ?>
+    </tbody>
 </table>
+</body>
+</html>
