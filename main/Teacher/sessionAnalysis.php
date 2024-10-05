@@ -13,82 +13,108 @@ function connectDB() {
     return $conn;
 }
 
-// Fetch assignments for a module
-function fetchAssignments($conn, $module_id) {
-    $query = "SELECT AssignmentID, AssignmentName FROM assignments WHERE ModuleID = ?";
+// Fetch all sessions taught by the teacher
+function fetchTeacherSessions($conn, $teacher_id) {
+    $query = "
+        SELECT 
+            s.SessionID, s.SessionDate, m.ModuleName, l.LabName 
+        FROM 
+            Sessions s
+        JOIN 
+            Modules m ON s.ModuleID = m.ModuleID
+        JOIN 
+            Labs l ON s.LabID = l.LabID
+        WHERE 
+            s.TeacherID = ?";
+    
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $sessions = [];
+    while ($row = $result->fetch_assoc()) {
+        $sessions[] = $row;
+    }
+    return $sessions;
+}
+
+// Fetch session details and attendance data for the selected session
+// Fetch session details and attendance data for the selected session
+function fetchSessionAttendance($conn, $session_id, $module_id) {
+    $query = "
+        SELECT 
+            st.FirstName, st.LastName, IFNULL(a.Status, 'absent') AS Status
+        FROM 
+            Students st
+        LEFT JOIN 
+            Attendance a ON st.StudentID = a.StudentID AND a.SessionID = ?
+        WHERE 
+            st.ModuleID = ?";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $session_id, $module_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $attendance_data = [];
+    while ($row = $result->fetch_assoc()) {
+        $attendance_data[] = $row;
+    }
+    return $attendance_data;
+}
+
+
+// Fetch total number of students enrolled in the module for the session
+function fetchTotalStudentsInModule($conn, $module_id) {
+    $query = "SELECT COUNT(*) as total_students FROM Students WHERE ModuleID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $module_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    $assignments = [];
-    while ($row = $result->fetch_assoc()) {
-        $assignments[] = $row;
-    }
-    return $assignments;
+    return $result->fetch_assoc()['total_students'];
 }
 
-// Fetch average marks for all assignments under a module
-function fetchAverageMarks($conn, $module_id) {
-    $query = "
-        SELECT a.AssignmentID, a.AssignmentName, AVG(am.MarksObtained) as averageMarks 
-        FROM assignments a
-        LEFT JOIN assignmentmarks am ON a.AssignmentID = am.AssignmentID 
-        WHERE a.ModuleID = ? 
-        GROUP BY a.AssignmentID";
+// Get the teacher ID from session (after login)
+session_start();
+$teacher_id = isset($_SESSION['teacher_id']) ? $_SESSION['teacher_id'] : 0;
 
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $module_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $average_marks = [];
-    while ($row = $result->fetch_assoc()) {
-        $average_marks[] = $row;
-    }
-    return $average_marks;
+if ($teacher_id == 0) {
+    echo "Unauthorized access!";
+    exit();
 }
 
-// Fetch marks for a specific assignment
-function fetchAssignmentMarks($conn, $assignment_id) {
-    $query = "
-        SELECT st.FirstName, st.LastName, am.MarksObtained 
-        FROM assignmentmarks am
-        JOIN Students st ON am.StudentID = st.StudentID 
-        WHERE am.AssignmentID = ?";
-
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $assignment_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $marks_data = [];
-    while ($row = $result->fetch_assoc()) {
-        $marks_data[] = $row;
-    }
-    return $marks_data;
-}
-
-// Get the module ID from the URL (if provided)
-$module_id = isset($_GET['module_id']) ? intval($_GET['module_id']) : 0;
+// Get selected session ID from URL (if provided)
+$session_id = isset($_GET['session_id']) ? intval($_GET['session_id']) : 0;
 
 $conn = connectDB();
 
-// Fetch average marks for assignments under the selected module
-$average_marks = [];
-$assignment_marks_data = [];
-$assignments = [];
+// Fetch sessions taught by the teacher
+$sessions = fetchTeacherSessions($conn, $teacher_id);
 
-if ($module_id > 0) {
-    $average_marks = fetchAverageMarks($conn, $module_id);
-    $assignments = fetchAssignments($conn, $module_id);
-}
+// If a session is selected, fetch attendance data
+$attendance_data = [];
+$module_id = 0;
+$lab_name = '';
+$session_date = '';
+$total_students = 0;
+$attendance_percentage = 0;
 
-// Get specific assignment marks if an assignment is selected
-$assignment_id = isset($_GET['assignment_id']) ? intval($_GET['assignment_id']) : 0;
+if ($session_id > 0) {
+    $session_details = $conn->query("SELECT ModuleID, LabID, SessionDate FROM Sessions WHERE SessionID = $session_id")->fetch_assoc();
+    $module_id = $session_details['ModuleID'];
+    $lab_name = $conn->query("SELECT LabName FROM Labs WHERE LabID = {$session_details['LabID']}")->fetch_assoc()['LabName'];
+    $session_date = $session_details['SessionDate'];
 
-if ($assignment_id > 0) {
-    $assignment_marks_data = fetchAssignmentMarks($conn, $assignment_id);
+    // Fetch attendance data with all students for the selected session
+    $attendance_data = fetchSessionAttendance($conn, $session_id, $module_id);
+    $total_students = fetchTotalStudentsInModule($conn, $module_id);
+
+    // Calculate attendance percentage
+    $present_count = count(array_filter($attendance_data, function($attendance) {
+        return $attendance['Status'] === 'present';
+    }));
+    $attendance_percentage = ($total_students > 0) ? ($present_count / $total_students) * 100 : 0;
 }
 
 $conn->close();
@@ -99,10 +125,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marks Analysis</title>
+    <title>Session Attendance Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
+       body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #e9ecef;
     margin: 0;
@@ -290,69 +316,79 @@ canvas {
 </head>
 <body>
     <div class="container">
-        <h1>Marks Analysis</h1>
+        <h1>Attendance Analysis</h1>
 
-        <!-- Dropdown to select an assignment -->
+        <!-- Dropdown to select a session -->
         <form method="GET">
-            <label for="assignment_id">Select Assignment:</label>
-            <select name="assignment_id" id="assignment_id" onchange="this.form.submit()">
-                <option value="">-- Select Assignment --</option>
-                <?php foreach ($assignments as $assignment): ?>
-                    <option value="<?php echo $assignment['AssignmentID']; ?>" <?php echo ($assignment['AssignmentID'] == $assignment_id) ? 'selected' : ''; ?>>
-                        <?php echo $assignment['AssignmentName']; ?>
+            <label for="session_id">Select a Session:</label>
+            <select name="session_id" id="session_id" onchange="this.form.submit()">
+                <option value="">-- Select Session --</option>
+                <?php foreach ($sessions as $session): ?>
+                    <option value="<?php echo $session['SessionID']; ?>" <?php echo ($session['SessionID'] == $session_id) ? 'selected' : ''; ?>>
+                        <?php echo "{$session['ModuleName']} ({$session['LabName']}) - {$session['SessionDate']}"; ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </form>
 
-        <!-- Bar Chart for Average Marks Analysis -->
-        <div class="chart-container">
-            <canvas id="averageMarksChart"></canvas>
-        </div>
+        <?php if ($session_id > 0): ?>
+            <h2>Session Details</h2>
+            <p>Session Date: <?php echo $session_date; ?></p>
+            <p>Lab Name: <?php echo $lab_name; ?></p>
+            <p>Total Students: <?php echo $total_students; ?></p>
+            <p>Attendance Percentage: <?php echo number_format($attendance_percentage, 2); ?>%</p>
 
-        <script>
-            var ctx = document.getElementById('averageMarksChart').getContext('2d');
-            var averageMarksChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: <?php echo json_encode(array_column($average_marks, 'AssignmentName')); ?>,
-                    datasets: [{
-                        label: 'Average Marks',
-                        data: <?php echo json_encode(array_column($average_marks, 'averageMarks')); ?>,
-                        backgroundColor: '#007bff',
-                        borderColor: '#0056b3',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                        }
+            <!-- Bar Chart for Attendance Analysis -->
+            <div class="chart-container">
+                <canvas id="attendanceChart" width="400" height="300"></canvas>
+            </div>
+
+            <script>
+                var ctx = document.getElementById('attendanceChart').getContext('2d');
+                var attendanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Present', 'Absent'],
+                        datasets: [{
+                            label: 'Attendance',
+                            data: [<?php echo $present_count; ?>, <?php echo $total_students - $present_count; ?>],
+                            backgroundColor: ['#4CAF50', '#F44336'],
+                            borderColor: ['#388E3C', '#D32F2F'],
+                            borderWidth: 1
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
-        </script>
+                });
+            </script>
 
-        <?php if ($assignment_id > 0): ?>
-            <h2>Assignment Details</h2>
+            <!-- Table for Attendance Details -->
             <table>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Marks Obtained</th>
-                </tr>
-                <?php foreach ($assignment_marks_data as $data): ?>
+                <thead>
                     <tr>
-                        <td><?php echo $data['FirstName'] . ' ' . $data['LastName']; ?></td>
-                        <td><?php echo $data['MarksObtained']; ?></td>
+                        <th>Student Name</th>
+                        <th>Status</th>
                     </tr>
-                <?php endforeach; ?>
+                </thead>
+                <tbody>
+                    <?php foreach ($attendance_data as $attendance): ?>
+                        <tr>
+                            <td><?php echo "{$attendance['FirstName']} {$attendance['LastName']}"; ?></td>
+                            <td><?php echo ucfirst($attendance['Status']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
         <?php endif; ?>
     </div>
