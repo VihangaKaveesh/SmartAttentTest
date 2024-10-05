@@ -85,7 +85,7 @@ if (isset($_POST['submit_assignment'])) {
 }
 
 $conn = connectDB();
-$studentID = $_SESSION['studentID']; // Get student ID from session
+$studentID = $_SESSION['student_id']; // Get student ID from session
 $assignments = getAssignmentsForStudent($conn, $studentID);
 $conn->close();
 ?>
@@ -114,7 +114,16 @@ $conn->close();
                 <td><?php echo $assignment['Description']; ?></td>
                 <td><?php echo $assignment['DueDate']; ?></td>
                 <td>
-                    <a href="<?php echo $assignment['Assignment']; ?>" download>Download</a>
+                    <?php 
+                    $filePath = "../Teacher/uploads/" . $assignment['Assignment']; // Update file path
+                    if (file_exists($filePath)) { 
+                    ?>
+                        <a href="<?php echo $filePath; ?>" download>Download</a>
+                    <?php 
+                    } else {
+                        echo "File not available";
+                    }
+                    ?>
                 </td>
                 <td>
                     <form action="" method="POST" enctype="multipart/form-data">
