@@ -125,7 +125,97 @@ $conn->close();
     <title>Session Attendance Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Same CSS styles for general layout */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 80%;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #555;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background: #f8f9fa;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            font-size: 1.1em;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            height: auto;
+        }
+
+        canvas {
+            width: 300px !important; /* Chart size */
+            height: 300px !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); /* Optional for depth effect */
+        }
+
+        .summary {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 1.3em;
+            color: #6c757d;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
