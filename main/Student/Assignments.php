@@ -118,8 +118,9 @@ $conn->close();
                                 echo "<td>No submission</td>";
                             }
 
-                            // Display marks or "Pending" if no marks are available
-                            echo "<td>" . (isset($row['marks']) && !is_null($row['marks']) ? htmlspecialchars($row['marks']) : 'Pending') . "</td>";
+                            // Display marks; show "Pending" if marks are NULL or empty
+                            $marksDisplay = (!empty($row['marks'])) ? htmlspecialchars($row['marks']) : "Pending";
+                            echo "<td>" . $marksDisplay . "</td>";
                             
                             echo "</tr>";
                         }
