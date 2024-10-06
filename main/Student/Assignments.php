@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     exit();
 }
 
-// Connect to the database
+// Function to connect to the database
 function connectDB() {
     $servername = "localhost";
     $username = "root";
@@ -23,117 +23,94 @@ function connectDB() {
     return $conn;
 }
 
-// Fetch assignments for the logged-in student based on their module ID
-function getAssignmentsForStudent($conn, $studentID) {
-    $sql = "SELECT a.AssignmentID, a.AssignmentName, a.Description, a.DueDate, a.Assignment, m.ModuleName
-            FROM assignments a
-            JOIN modules m ON a.ModuleID = m.ModuleID
-            JOIN students s ON a.ModuleID = s.ModuleID
-            WHERE s.StudentID = ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $studentID);
-    $stmt->execute();
-    
-    $result = $stmt->get_result();
-    $assignments = [];
-    while ($row = $result->fetch_assoc()) {
-        $assignments[] = $row;
-    }
-    return $assignments;
-}
-
-// Check if the form for submitting assignment is submitted
-if (isset($_POST['submit_assignment'])) {
-    $conn = connectDB();
-    
-    $assignmentID = $_POST['assignmentID'];
-    $studentID = $_SESSION['studentID']; // Assuming student ID is stored in session
-    $submissionDate = date('Y-m-d H:i:s'); // Current date and time for submission
-
-    // Handle file upload for the submitted assignment
-    $targetDir = "uploads/";
-    $fileName = basename($_FILES["submissionFile"]["name"]);
-    $targetFilePath = $targetDir . $fileName;
-    $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-
-    // Allow certain file formats for submission
-    $allowedTypes = array("pdf", "doc", "docx", "zip");
-
-    if (in_array($fileType, $allowedTypes)) {
-        // Upload the file to the server
-        if (move_uploaded_file($_FILES["submissionFile"]["tmp_name"], $targetFilePath)) {
-            // Insert submission data into the database
-            $sql = "INSERT INTO submissions (StudentID, AssignmentID, SubmissionFile, SubmissionDate)
-                    VALUES (?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("iiss", $studentID, $assignmentID, $targetFilePath, $submissionDate);
-
-            if ($stmt->execute()) {
-                echo "Assignment submitted successfully.";
-            } else {
-                echo "Error: " . $stmt->error;
-            }
-        } else {
-            echo "Sorry, there was an error uploading your submission file.";
-        }
-    } else {
-        echo "Sorry, only PDF, DOC, DOCX, & ZIP files are allowed for submission.";
-    }
-
-    $conn->close();
-}
-
 $conn = connectDB();
-$studentID = $_SESSION['student_id']; // Get student ID from session
-$assignments = getAssignmentsForStudent($conn, $studentID);
+
+$studentId = $_SESSION['student_id'];
+$moduleIdQuery = "SELECT ModuleID FROM students WHERE StudentID = ?";
+$stmt = $conn->prepare($moduleIdQuery);
+$stmt->bind_param("i", $studentId);
+$stmt->execute();
+$stmt->bind_result($moduleId);
+$stmt->fetch();
+$stmt->close();
+
+// Query to select assignments for the logged-in student's module
+$sql = "SELECT a.AssignmentID, a.AssignmentName, a.filename, a.DueDate, a.HandoutDate, s.filename AS submitted_file
+        FROM assignments a
+        LEFT JOIN submissions s ON a.AssignmentID = s.AssignmentID AND s.StudentID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $studentId);
+$stmt->execute();
+$result = $stmt->get_result();
+
 $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignments</title>
+    <title>Download Assignments</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <h2>Your Assignments</h2>
-    <table border="1">
-        <tr>
-            <th>Assignment Name</th>
-            <th>Description</th>
-            <th>Due Date</th>
-            <th>Download</th>
-            <th>Submit</th>
-        </tr>
-        <?php foreach ($assignments as $assignment): ?>
-            <tr>
-                <td><?php echo $assignment['AssignmentName']; ?></td>
-                <td><?php echo $assignment['Description']; ?></td>
-                <td><?php echo $assignment['DueDate']; ?></td>
-                <td>
-                    <?php 
-                    $filePath = "../Teacher/uploads/" . $assignment['Assignment']; // Update file path
-                    if (file_exists($filePath)) { 
-                    ?>
-                        <a href="<?php echo $filePath; ?>" download>Download</a>
-                    <?php 
+    <div class="container">
+        <h1 class="mt-4">Download Assignments</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Assignment Name</th>
+                        <th>Handout Date</th>
+                        <th>Due Date</th>
+                        <th>Download</th>
+                        <th>Submit</th>
+                        <th>Your Submission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['AssignmentName']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['HandoutDate']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['DueDate']) . "</td>";
+
+                            // Download link for the assignment
+                            echo "<td><a href='uploads/" . htmlspecialchars($row['filename']) . "' download>Download</a></td>"; 
+
+                            // Get current date and due date
+                            $currentDateTime = new DateTime();
+                            $dueDateTime = new DateTime($row['DueDate']);
+
+                            if ($currentDateTime < $dueDateTime) {
+                                // Display submit button if the due date is not passed
+                                echo "<td><form action='submit_assignment.php' method='POST' enctype='multipart/form-data'>";
+                                echo "<input type='hidden' name='AssignmentID' value='" . htmlspecialchars($row['AssignmentID']) . "'>";
+                                echo "<input type='file' name='submission_file' required>";
+                                echo "<input type='submit' value='Submit' class='btn btn-primary'>";
+                                echo "</form></td>";
+                            } else {
+                                // Display message if the due date is passed
+                                echo "<td><button class='btn btn-secondary' disabled>Submission Closed</button></td>";
+                            }
+
+                            // Check if the student has submitted a file
+                            if ($row['submitted_file']) {
+                                echo "<td><a href='submissions/" . htmlspecialchars($row['submitted_file']) . "' download>Download Your Submission</a></td>";
+                            } else {
+                                echo "<td>No submission</td>";
+                            }
+
+                            echo "</tr>";
+                        }
                     } else {
-                        echo "File not available";
+                        echo "<tr><td colspan='6'>No records found.</td></tr>";
                     }
                     ?>
-                </td>
-                <td>
-                    <form action="" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="assignmentID" value="<?php echo $assignment['AssignmentID']; ?>">
-                        <input type="file" name="submissionFile" required>
-                        <input type="submit" name="submit_assignment" value="Submit">
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
