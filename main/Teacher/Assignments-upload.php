@@ -159,45 +159,49 @@ if (isset($_POST['submit'])) {
             </div>
         </div>
 
-        <!-- Assignments Table (Assignments uploaded by the logged-in teacher) -->
-        <div class="card mt-5">
-            <div class="card-header">
-                <h4 class="card-title text-center">Your Uploaded Assignments</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Assignment Name</th>
-                            <th>Module</th>
-                            <th>HandOut Date</th>
-                            <th>Due Date</th>
-                            <th>Download</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $conn = connectDB();
-                        $assignments = getTeacherAssignments($conn, $teacherID);
-                        if (!empty($assignments)) {
-                            foreach ($assignments as $assignment) {
-                                echo "<tr>";
-                                echo "<td>" . $assignment['AssignmentName'] . "</td>";
-                                echo "<td>" . $assignment['ModuleName'] . "</td>";
-                                echo "<td>" . $assignment['HandOutDate'] . "</td>";
-                                echo "<td>" . $assignment['DueDate'] . "</td>";
-                                echo "<td><a href='" . $assignment['folder_path'] . $assignment['filename'] . "' target='_blank' class='btn btn-info'>Download</a></td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='5' class='text-center'>No assignments found.</td></tr>";
-                        }
-                        $conn->close();
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- Assignments Table (Assignments uploaded by the logged-in teacher) -->
+<div class="card mt-5">
+    <div class="card-header">
+        <h4 class="card-title text-center">Your Uploaded Assignments</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Assignment Name</th>
+                    <th>Module</th>
+                    <th>HandOut Date</th>
+                    <th>Due Date</th>
+                    <th>Download</th>
+                    <th>View Submissions</th> <!-- New column for View Submissions -->
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $conn = connectDB();
+                $assignments = getTeacherAssignments($conn, $teacherID);
+                if (!empty($assignments)) {
+                    foreach ($assignments as $assignment) {
+                        echo "<tr>";
+                        echo "<td>" . $assignment['AssignmentName'] . "</td>";
+                        echo "<td>" . $assignment['ModuleName'] . "</td>";
+                        echo "<td>" . $assignment['HandOutDate'] . "</td>";
+                        echo "<td>" . $assignment['DueDate'] . "</td>";
+                        echo "<td><a href='" . $assignment['folder_path'] . $assignment['filename'] . "' target='_blank' class='btn btn-info'>Download</a></td>";
+                        
+                        // New "View Submissions" button
+                        echo "<td><a href='view_submissions.php?assignmentID=" . $assignment['AssignmentID'] . "' class='btn btn-secondary'>View Submissions</a></td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='6' class='text-center'>No assignments found.</td></tr>";
+                }
+                $conn->close();
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
     </div>
 
     <!--Bootstrap JS-->

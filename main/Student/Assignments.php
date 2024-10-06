@@ -35,7 +35,8 @@ $stmt->fetch();
 $stmt->close();
 
 // Query to select assignments for the logged-in student's module
-$sql = "SELECT a.AssignmentID, a.AssignmentName, a.filename, a.DueDate, a.HandoutDate, s.filename AS submitted_file
+$sql = "SELECT a.AssignmentID, a.AssignmentName, a.filename, a.DueDate, a.HandoutDate, 
+               s.filename AS submitted_file, s.marks
         FROM assignments a
         LEFT JOIN submissions s ON a.AssignmentID = s.AssignmentID AND s.StudentID = ?
         WHERE a.ModuleID = ?"; // Added filter for ModuleID
@@ -67,6 +68,7 @@ $conn->close();
                         <th>Download</th>
                         <th>Submit / Update</th>
                         <th>Your Submission</th>
+                        <th>Marks</th> <!-- New column for Marks -->
                     </tr>
                 </thead>
                 <tbody>
@@ -116,10 +118,13 @@ $conn->close();
                                 echo "<td>No submission</td>";
                             }
 
+                            // Display marks or "Pending" if no marks are available
+                            echo "<td>" . (isset($row['marks']) && !is_null($row['marks']) ? htmlspecialchars($row['marks']) : 'Pending') . "</td>";
+                            
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='6'>No records found.</td></tr>";
+                        echo "<tr><td colspan='7'>No records found.</td></tr>";
                     }
                     ?>
                 </tbody>
