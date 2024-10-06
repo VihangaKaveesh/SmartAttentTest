@@ -18,7 +18,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'student';
     $_SESSION['student_id'] = $row['StudentID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Student/Student_Dashboard.html");
+    header("Location: ../Student/studentDashboard.php");
     exit();
 }
 
