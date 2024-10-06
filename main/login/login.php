@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'teacher';
     $_SESSION['teacher_id'] = $row['TeacherID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Teacher/Teacher_Dashboard.html");
+    header("Location: ../Teacher/teacherDashboard.php");
     exit();
 }
 
