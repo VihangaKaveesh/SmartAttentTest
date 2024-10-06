@@ -172,61 +172,227 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Management</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #FFE3B3;
+       body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FFE3B3 0%, #53D2DC 100%);
             color: #26648E;
+            margin: 0;
             padding: 20px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #53D2DC;
-            color: #26648E;
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
         }
-        th, td {
-            border: 1px solid #4F8FC0;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #26648E;
-            color: #FFE3B3;
-        }
-        td {
-            background-color: #FFE3B3;
-        }
-        .message {
-            color: green;
-        }
-        .error {
-            color: red;
-        }
+
         form {
-            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
         }
-        input[type="text"], input[type="password"], input[type="email"], select {
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
             width: 100%;
             padding: 10px;
-            margin: 5px 0 10px 0;
+            margin: 5px 0 15px 0;
             border: 1px solid #4F8FC0;
-            border-radius: 4px;
+            border-radius: 5px;
             background-color: #FFE3B3;
             color: #26648E;
+            transition: border-color 0.3s;
         }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            border-color: #26648E;
+            outline: none;
+        }
+
         input[type="submit"] {
             background-color: #26648E;
             color: #FFE3B3;
             border: none;
             padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%; /* Make buttons full width */
         }
+
         input[type="submit"]:hover {
             background-color: #4F8FC0;
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #4F8FC0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #26648E;
+            color: #FFE3B3;
+        }
+
+        td {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .success {
+            color: green;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            input[type="submit"] {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping for responsiveness */
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 1rem;
+            position: relative; /* For positioning the dropdown */
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            flex: 1; /* Allow logo to take available space */
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            flex: 2; /* Allow nav links to take available space */
+            justify-content: flex-end; /* Align to the right */
+        }
+
+        .nav-links li {
+            margin-left: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px; /* Add padding for better click area */
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #ff4081; /* Change to your preferred hover color */
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger .line {
+            height: 3px;
+            width: 25px;
+            background-color: white;
+            margin: 3px 0;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 60px; /* Adjust based on navbar height */
+                left: 0;
+                background-color: #333;
+                z-index: 10;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        /* Additional Styles for Page Content */
+        .container {
+            padding: 20px;
+        }
+
+        /* Responsive Table */
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
+<header>
+    <nav class="navbar">
+        <div class="logo">Your Logo</div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="manageStudents.php">Students</a></li>
+            <li><a href="manageTeachers.php">Teachers</a></li>
+            <li><a href="addModules.php">Modules</a></li>
+            <li><a href="logout.html">Logout</a></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </nav>
+</header>
 
 <h1>Manage Modules</h1>
 
@@ -290,5 +456,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
         ?>
     </tbody>
 </table>
+<script>
+document.getElementById('navbar-toggler').addEventListener('click', function() {
+    const menu = document.getElementById('navbar-menu');
+    menu.classList.toggle('active');
+});</script>
+
+
 </body>
 </html>
