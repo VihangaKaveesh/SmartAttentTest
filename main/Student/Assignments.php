@@ -77,7 +77,7 @@ $conn->close();
                             echo "<td>" . htmlspecialchars($row['DueDate']) . "</td>";
 
                             // Download link for the assignment
-                            echo "<td><a href='uploads/" . htmlspecialchars($row['filename']) . "' download>Download</a></td>"; 
+                            echo "<td><a href='../Teacher/uploads/" . htmlspecialchars($row['filename']) . "' download>Download</a></td>"; 
 
                             // Get current date and due date
                             $currentDateTime = new DateTime();
