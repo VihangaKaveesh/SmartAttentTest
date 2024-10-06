@@ -127,6 +127,14 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
 <div class="dashboard-container">
     <h1>Student Dashboard</h1>
     <div class="dashboard-grid">
+        <a href="student_profile.php" class="dashboard-item">
+            <i class="fas fa-user"></i>
+            <p>Profile</p>
+        </a>
+        <a href="qr-scanner.html" class="dashboard-item">
+            <i class="fas fa-qrcode"></i>
+            <p>QR Scanner</p>
+        </a>
         <a href="Assignments.php" class="dashboard-item">
             <i class="fas fa-file-alt"></i>
             <p>Assignments</p>
@@ -139,13 +147,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
             <i class="fas fa-bullhorn"></i>
             <p>Notice Board</p>
         </a>
-        <a href="student_profile.php" class="dashboard-item">
-            <i class="fas fa-user"></i>
-            <p>Profile</p>
-        </a>
-        <a href="qr-scanner.html" class="dashboard-item">
-            <i class="fas fa-qrcode"></i>
-            <p>QR Scanner</p>
+        <a href="../login/login.html" class="dashboard-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <p>Logout</p>
         </a>
     </div>
 </div>

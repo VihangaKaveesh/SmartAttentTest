@@ -127,6 +127,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
 <div class="dashboard-container">
     <h1>Teacher Dashboard</h1>
     <div class="dashboard-grid">
+        <a href="teacher_profile.php" class="dashboard-item">
+            <i class="fas fa-user"></i>
+            <p>Profile</p>
+        </a>
         <a href="Teacher-qr-generator.php" class="dashboard-item">
             <i class="fas fa-qrcode"></i>
             <p>QR Code Generator</p>
@@ -138,6 +142,14 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
         <a href="lecture_material_upload.php" class="dashboard-item">
             <i class="fas fa-file-alt"></i>
             <p>Upload Lecture Materials</p>
+        </a>
+        <a href="sessionAnalysis.php" class="dashboard-item">
+            <i class="fas fa-clipboard-list"></i>
+            <p>Attendance</p>
+        </a>
+        <a href="../login/login.html" class="dashboard-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <p>Logout</p>
         </a>
     </div>
 </div>

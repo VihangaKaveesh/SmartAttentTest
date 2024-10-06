@@ -139,6 +139,14 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
             <i class="fas fa-chalkboard-teacher"></i>
             <p>Teachers</p>
         </a>
+        <a href="notice.php" class="dashboard-item">
+            <i class="fas fa-bullhorn"></i>
+            <p>Notices</p>
+        </a>
+        <a href="../login/login.html" class="dashboard-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <p>Logout</p>
+        </a>
     </div>
 </div>
 
