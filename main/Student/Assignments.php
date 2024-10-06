@@ -65,7 +65,7 @@ $conn->close();
                         <th>Handout Date</th>
                         <th>Due Date</th>
                         <th>Download</th>
-                        <th>Submit</th>
+                        <th>Submit / Update</th>
                         <th>Your Submission</th>
                     </tr>
                 </thead>
@@ -86,12 +86,24 @@ $conn->close();
                             $dueDateTime = new DateTime($row['DueDate']);
 
                             if ($currentDateTime < $dueDateTime) {
-                                // Display submit button if the due date is not passed
-                                echo "<td><form action='submit_assignment.php' method='POST' enctype='multipart/form-data'>";
-                                echo "<input type='hidden' name='AssignmentID' value='" . htmlspecialchars($row['AssignmentID']) . "'>";
-                                echo "<input type='file' name='submission_file' required>";
-                                echo "<input type='submit' value='Submit' class='btn btn-primary'>";
-                                echo "</form></td>";
+                                // Check if the student has submitted a file
+                                if ($row['submitted_file']) {
+                                    // Show an Update button if a submission exists
+                                    echo "<td>";
+                                    echo "<form action='submit_assignment.php' method='POST' enctype='multipart/form-data'>";
+                                    echo "<input type='hidden' name='AssignmentID' value='" . htmlspecialchars($row['AssignmentID']) . "'>";
+                                    echo "<input type='file' name='submission_file' required>";
+                                    echo "<input type='hidden' name='update' value='1'>"; // Add a hidden field to indicate update
+                                    echo "<input type='submit' value='Update' class='btn btn-primary'>";
+                                    echo "</form></td>";
+                                } else {
+                                    // Display submit button if no submission exists
+                                    echo "<td><form action='submit_assignment.php' method='POST' enctype='multipart/form-data'>";
+                                    echo "<input type='hidden' name='AssignmentID' value='" . htmlspecialchars($row['AssignmentID']) . "'>";
+                                    echo "<input type='file' name='submission_file' required>";
+                                    echo "<input type='submit' value='Submit' class='btn btn-primary'>";
+                                    echo "</form></td>";
+                                }
                             } else {
                                 // Display message if the due date is passed
                                 echo "<td><button class='btn btn-secondary' disabled>Submission Closed</button></td>";

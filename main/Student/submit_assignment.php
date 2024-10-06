@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-// Check if the user is logged in as a student
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    header("Location: ../login/login.html");
-    exit();
-}
-
 // Function to connect to the database
 function connectDB() {
     $servername = "localhost";
@@ -34,6 +28,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $assignmentID = $_POST['AssignmentID'];
     $studentID = $_SESSION['student_id']; // Assuming student_id is stored in session
 
+    // Check if a previous submission exists
+    $query = "SELECT filename FROM submissions WHERE AssignmentID = ? AND StudentID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $assignmentID, $studentID);
+    $stmt->execute();
+    $stmt->bind_result($existingFile);
+    $stmt->fetch();
+    $stmt->close();
+
+    // If a previous submission exists, delete it from the database
+    if ($existingFile) {
+        // Delete the existing submission record from the database
+        $deleteQuery = "DELETE FROM submissions WHERE AssignmentID = ? AND StudentID = ?";
+        $deleteStmt = $conn->prepare($deleteQuery);
+        $deleteStmt->bind_param("ii", $assignmentID, $studentID);
+        $deleteStmt->execute();
+        $deleteStmt->close();
+
+        // Optionally delete the old file from the server
+        $oldFilePath = 'submissions/' . $existingFile;
+        if (file_exists($oldFilePath)) {
+            unlink($oldFilePath); // Delete the old file
+        }
+    }
+
     // Check for the uploaded file
     if (isset($_FILES['submission_file']) && $_FILES['submission_file']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['submission_file']['tmp_name'];
@@ -59,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Success message
                 echo "<div style='text-align: center; margin-top: 50px;'>";
                 echo "<h2>File submitted successfully.</h2>";
-                echo "<p>You will be redirected to Assignments page in 5 seconds.</p>";
+                echo "<p>You will be redirected to the Assignments page in 5 seconds.</p>";
                 echo "</div>";
 
                 // JavaScript for redirect after 5 seconds
@@ -79,4 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Error uploading the file.";
     }
 }
+
+$conn->close();
 ?>
