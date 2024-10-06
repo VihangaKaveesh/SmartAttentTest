@@ -1,11 +1,14 @@
 <?php
 session_start();
 
-// Check if the user is logged in as a student
+// Check if the user is logged in as a teacher
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
     header("Location: ../login/login.html");
     exit();
 }
+
+// Get teacher's ID from session (assuming it's stored in the session)
+$teacherID = $_SESSION['teacher_id']; // Make sure this session variable is set during login
 
 // Function to connect to the database
 function connectDB() {
@@ -25,10 +28,16 @@ function connectDB() {
     return $conn;
 }
 
-// Function to fetch modules
-function getModules($conn) {
-    $sql = "SELECT ModuleID, ModuleName FROM modules"; // Replace 'modules' with your actual table name
-    $result = $conn->query($sql);
+// Function to fetch modules taught by the logged-in teacher
+function getModules($conn, $teacherID) {
+    $sql = "SELECT ModuleID, ModuleName 
+            FROM modules 
+            WHERE TeacherID = ?"; // Only fetch modules assigned to the teacher
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $teacherID);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $modules = [];
     if ($result->num_rows > 0) {
@@ -39,9 +48,30 @@ function getModules($conn) {
     return $modules;
 }
 
+// Function to fetch assignments uploaded by the logged-in teacher
+function getTeacherAssignments($conn, $teacherID) {
+    $sql = "SELECT a.AssignmentID, a.ModuleID, a.AssignmentName, a.filename, a.folder_path, a.HandOutDate, a.DueDate, m.ModuleName 
+            FROM assignments a
+            JOIN modules m ON a.ModuleID = m.ModuleID
+            WHERE a.TeacherID = ?"; // Fetch assignments by teacher ID
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $teacherID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $assignments = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $assignments[] = $row;
+        }
+    }
+    return $assignments;
+}
+
 // Check if file is uploaded
 if (isset($_POST['submit'])) {
-    $conn = connectDB(); // Call the connectDB() function to establish the connection
+    $conn = connectDB();
 
     $targetDir = "uploads/";
     $targetFile = $targetDir . basename($_FILES["pdfFile"]["name"]);
@@ -51,21 +81,19 @@ if (isset($_POST['submit'])) {
     if ($fileType != "pdf" || $_FILES["pdfFile"]["size"] > 10000000) {
         echo "Error: Only PDF files less than 10MB are allowed to upload.";
     } else {
-        // Move uploaded file to uploads folder
         if (move_uploaded_file($_FILES["pdfFile"]["tmp_name"], $targetFile)) {
-            // Insert file information into database
             $filename = $_FILES["pdfFile"]["name"];
             $folder_path = $targetDir;
             $handOutDate = date('Y-m-d H:i:s', strtotime('+5 hours 30 minutes')); // Sri Lanka Time (UTC+5:30)
 
             // Get selected ModuleID and other details
-            $moduleID = intval($_POST['module']); // Sanitize input
-            $assignmentName = $conn->real_escape_string($_POST['assignmentName']); // Sanitize input
-            $dueDate = $conn->real_escape_string($_POST['dueDate']); // Sanitize input
+            $moduleID = intval($_POST['module']);
+            $assignmentName = $conn->real_escape_string($_POST['assignmentName']);
+            $dueDate = $conn->real_escape_string($_POST['dueDate']);
 
-            // Insert query
-            $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate)
-                    VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate')";
+            // Insert query including TeacherID
+            $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate, TeacherID)
+                    VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate', '$teacherID')";
 
             if ($conn->query($sql) === TRUE) {
                 echo "File uploaded and assignment created successfully.";
@@ -73,7 +101,7 @@ if (isset($_POST['submit'])) {
                 echo "Error: " . $sql . "<br>" . $conn->error;
             }
 
-            $conn->close(); // Close the connection after the query
+            $conn->close();
         } else {
             echo "Error uploading file.";
         }
@@ -91,8 +119,9 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container d-flex justify-content-center align-items-center" style="height:100vh">
-        <div class="card">
+    <div class="container">
+        <!-- Assignment Upload Form -->
+        <div class="card mt-5">
             <div class="card-header">
                 <h4 class="card-title text-center">Upload PDF File for Assignment</h4>
             </div>
@@ -103,12 +132,12 @@ if (isset($_POST['submit'])) {
                         <select name="module" class="form-control" id="module" required>
                             <option value="">Select a module</option>
                             <?php
-                            $conn = connectDB(); // Call the connectDB() function
-                            $modules = getModules($conn); // Get the list of modules
+                            $conn = connectDB();
+                            $modules = getModules($conn, $teacherID); // Pass teacher ID to filter modules
                             foreach ($modules as $module) {
                                 echo "<option value='" . $module['ModuleID'] . "'>" . $module['ModuleName'] . "</option>";
                             }
-                            $conn->close(); // Close the connection
+                            $conn->close();
                             ?>
                         </select>
                     </div>
@@ -127,6 +156,46 @@ if (isset($_POST['submit'])) {
                     <button type="submit" name="submit" class="btn btn-primary btn-block">Upload File</button>
                     <button type="reset" class="btn btn-warning btn-block">Reset</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- Assignments Table (Assignments uploaded by the logged-in teacher) -->
+        <div class="card mt-5">
+            <div class="card-header">
+                <h4 class="card-title text-center">Your Uploaded Assignments</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Assignment Name</th>
+                            <th>Module</th>
+                            <th>HandOut Date</th>
+                            <th>Due Date</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $conn = connectDB();
+                        $assignments = getTeacherAssignments($conn, $teacherID);
+                        if (!empty($assignments)) {
+                            foreach ($assignments as $assignment) {
+                                echo "<tr>";
+                                echo "<td>" . $assignment['AssignmentName'] . "</td>";
+                                echo "<td>" . $assignment['ModuleName'] . "</td>";
+                                echo "<td>" . $assignment['HandOutDate'] . "</td>";
+                                echo "<td>" . $assignment['DueDate'] . "</td>";
+                                echo "<td><a href='" . $assignment['folder_path'] . $assignment['filename'] . "' target='_blank' class='btn btn-info'>Download</a></td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='5' class='text-center'>No assignments found.</td></tr>";
+                        }
+                        $conn->close();
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

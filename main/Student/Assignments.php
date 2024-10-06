@@ -37,9 +37,11 @@ $stmt->close();
 // Query to select assignments for the logged-in student's module
 $sql = "SELECT a.AssignmentID, a.AssignmentName, a.filename, a.DueDate, a.HandoutDate, s.filename AS submitted_file
         FROM assignments a
-        LEFT JOIN submissions s ON a.AssignmentID = s.AssignmentID AND s.StudentID = ?";
+        LEFT JOIN submissions s ON a.AssignmentID = s.AssignmentID AND s.StudentID = ?
+        WHERE a.ModuleID = ?"; // Added filter for ModuleID
+
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $studentId);
+$stmt->bind_param("ii", $studentId, $moduleId); // Bind both studentId and moduleId
 $stmt->execute();
 $result = $stmt->get_result();
 
