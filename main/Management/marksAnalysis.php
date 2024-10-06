@@ -72,6 +72,22 @@ function getAssignmentDetails($assignment_id) {
     return $data;
 }
 
+// Fetch module name by module ID
+function getModuleName($module_id) {
+    $conn = connectDB();
+    $query = "SELECT ModuleName FROM modules WHERE ModuleID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $module_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $moduleName = $result->fetch_assoc()['ModuleName'] ?? 'Unknown Module';
+
+    $stmt->close();
+    $conn->close();
+    return $moduleName;
+}
+
+
 // Fetch all assignments under a module for the dropdown
 function getAssignments($module_id) {
     $conn = connectDB();
@@ -91,10 +107,30 @@ function getAssignments($module_id) {
     return $assignments;
 }
 
+// Fetch the submission statistics for a specific assignment
+function getSubmissionStats($assignment_id, $module_id) {
+    $conn = connectDB();
+    $query = "
+        SELECT 
+            (SELECT COUNT(*) FROM students WHERE ModuleID = ?) AS totalStudents,
+            (SELECT COUNT(*) FROM assignmentmarks WHERE AssignmentID = ?) AS submittedStudents";
+    
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $module_id, $assignment_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+
+    $stmt->close();
+    $conn->close();
+    return $data;
+}
+
 $module_id = $_GET['module_id'] ?? null;
 $assignment_id = $_GET['assignment_id'] ?? null;
 $average_marks_data = [];
 $assignment_details = [];
+$submission_stats = [];
 
 // Get average marks for all assignments under the selected module
 if ($module_id) {
@@ -104,279 +140,234 @@ if ($module_id) {
 // Get specific assignment details if an assignment is selected
 if ($assignment_id) {
     $assignment_details = getAssignmentDetails($assignment_id);
+    $submission_stats = getSubmissionStats($assignment_id, $module_id);
 }
+// Get the selected module name
+$module_name = $module_id ? getModuleName($module_id) : '';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marks Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-    body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #e9ecef;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
 
-h1 {
-    text-align: center;
-    color: #0056b3;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
+        .container {
+            max-width: 80%;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 80%;
-    margin: 0 auto;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.5s ease-in-out;
-}
+        h1, h2 {
+            text-align: center;
+            color: #0056b3;
+        }
 
-p {
-    font-size: 1.2em;
-    color: #555;
-    margin: 10px 0;
-    text-align: center;
-}
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    background: #f8f9fa;
-}
+        select {
+            padding: 10px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
 
-th, td {
-    padding: 15px;
-    text-align: center;
-    border: 1px solid #dee2e6;
-    font-size: 1.1em;
-}
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            height: auto;
+        }
 
-th {
-    background-color: #007bff;
-    color: white;
-    letter-spacing: 0.05em;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
 
-td {
-    color: #333;
-}
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            font-size: 1.1em;
+        }
 
-tr:nth-child(even) {
-    background-color: #f1f1f1;
-}
+        th {
+            background-color: #007bff;
+            color: white;
+        }
 
-tr:hover {
-    background-color: #f8f9fa;
-    cursor: pointer;
-}
+        tr:nth-child(even) {
+            background-color: #f1f1f1;
+        }
 
-.chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 40px 0;
-    height: auto;
-}
+        tr:hover {
+            background-color: #f8f9fa;
+        }
 
-canvas {
-    width: 500px !important; /* Chart size */
-    height: 500px !important;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); /* Optional for depth effect */
-}
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
 
-.summary {
-    text-align: center;
-    margin: 30px 0;
-    font-size: 1.3em;
-    color: #6c757d;
-}
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-/* MEDIA QUERIES FOR RESPONSIVENESS */
-
-/* Tablets and smaller devices */
-@media (max-width: 1024px) {
-    .container {
-        max-width: 95%;
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-
-    p {
-        font-size: 1.1em;
-    }
-
-    th, td {
-        font-size: 1em;
-        padding: 10px;
-    }
-
-    .chart-container {
-        flex-direction: column;
-        margin: 30px 0;
-    }
-
-    canvas {
-        width: 250px !important;
-        height: 250px !important;
-    }
-}
-
-/* Mobile devices */
-@media (max-width: 768px) {
-    .container {
-        max-width: 100%;
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.7em;
-    }
-
-    p {
-        font-size: 1em;
-    }
-
-    th, td {
-        font-size: 0.9em;
-        padding: 8px;
-    }
-
-    .chart-container {
-        margin: 20px 0;
-    }
-
-    canvas {
-        width: 200px !important;
-        height: 200px !important;
-    }
-
-    table {
-        font-size: 0.9em;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.5em;
-    }
-
-    p {
-        font-size: 0.9em;
-    }
-
-    th, td {
-        font-size: 0.8em;
-        padding: 6px;
-    }
-
-    canvas {
-        width: 180px !important;
-        height: 180px !important;
-    }
-
-    table {
-        font-size: 0.85em;
-    }
-}
-</style>
-</head>
-<body>
-
-<h1>Marks Analysis for Module</h1>
-
-<!-- Average marks chart -->
-<canvas id="averageMarksChart" width="400" height="200"></canvas>
-
-<script>
-    const ctx = document.getElementById('averageMarksChart').getContext('2d');
-    const averageMarksData = <?php echo json_encode($average_marks_data); ?>;
-
-    const labels = averageMarksData.map(item => item.AssignmentName);
-    const data = averageMarksData.map(item => parseFloat(item.averageMarks));
-
-    const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Average Marks',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
+            canvas {
+                width: 300px !important;
+                height: 300px !important;
             }
         }
-    });
-</script>
+    </style>
+</head>
+<body>
+<div class="container">
+<h1>Marks Analysis for <?php echo htmlspecialchars($module_name); ?></h1>
 
-<!-- Assignment dropdown for individual analysis -->
-<form method="GET" action="marksAnalysis.php">
-    <input type="hidden" name="module_id" value="<?php echo $module_id; ?>">
-    <label for="assignment">Select Assignment:</label>
-    <select name="assignment_id" id="assignment" onchange="this.form.submit()">
-        <option value="">Select an assignment</option>
-        <?php
-        $assignments = getAssignments($module_id);
-        foreach ($assignments as $assignment) {
-            $selected = ($assignment['AssignmentID'] == $assignment_id) ? 'selected' : '';
-            echo "<option value='{$assignment['AssignmentID']}' $selected>{$assignment['AssignmentName']}</option>";
-        }
-        ?>
-    </select>
-</form>
-
-<?php if ($assignment_id && !empty($assignment_details)): ?>
-    <h2>Marks for Assignment</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Student Name</th>
-                <th>Marks Obtained</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($assignment_details as $detail): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($detail['StudentName']); ?></td>
-                    <td><?php echo htmlspecialchars($detail['MarksObtained']); ?></td>
-                </tr>
+    <!-- Dropdown to select an assignment -->
+    <form method="GET">
+        <label for="assignment_id">Select an Assignment:</label>
+        <select name="assignment_id" id="assignment_id" onchange="this.form.submit()">
+            <option value="">-- Select Assignment --</option>
+            <?php foreach (getAssignments($module_id) as $assignment): ?>
+                <option value="<?php echo $assignment['AssignmentID']; ?>" <?php echo ($assignment['AssignmentID'] == $assignment_id) ? 'selected' : ''; ?>>
+                    <?php echo $assignment['AssignmentName']; ?>
+                </option>
             <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php elseif ($assignment_id): ?>
-    <p>No marks found for this assignment.</p>
-<?php endif; ?>
+        </select>
+        <input type="hidden" name="module_id" value="<?php echo $module_id; ?>">
+    </form>
 
+    <!-- Overall Module Average Marks Chart -->
+    <?php if ($module_id && !$assignment_id): ?>
+        <h2>Average Marks for All Assignments</h2>
+        <div class="chart-container">
+            <canvas id="averageMarksChart"></canvas>
+        </div>
+
+        <script>
+            var ctx = document.getElementById('averageMarksChart').getContext('2d');
+            var averageMarksChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: <?php echo json_encode(array_column($average_marks_data, 'AssignmentName')); ?>,
+                    datasets: [{
+                        label: 'Average Marks',
+                        data: <?php echo json_encode(array_column($average_marks_data, 'averageMarks')); ?>,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        </script>
+    <?php endif; ?>
+
+    <!-- Detailed Student Marks for Selected Assignment -->
+    <?php if ($assignment_id): ?>
+        <h2>Student Marks for Assignment</h2>
+        <div class="chart-container">
+            <canvas id="studentMarksChart"></canvas>
+        </div>
+
+        <script>
+            var ctx = document.getElementById('studentMarksChart').getContext('2d');
+            var marksData = <?php echo json_encode(array_column($assignment_details, 'MarksObtained')); ?>;
+
+            // Calculate the average marks
+            var totalMarks = marksData.reduce((a, b) => a + (b || 0), 0);
+            var averageMarks = totalMarks / marksData.filter(mark => mark !== null).length;
+
+            var studentMarksChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: <?php echo json_encode(array_column($assignment_details, 'StudentName')); ?>,
+                    datasets: [{
+                        label: 'Marks Obtained',
+                        data: marksData,
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Average Marks',
+                        data: new Array(marksData.length).fill(averageMarks),
+                        type: 'line',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        </script>
+
+        <!-- Submission Statistics -->
+        <h2>Submission Statistics</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Total Students</th>
+                    <th>Submitted Students</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><?php echo $submission_stats['totalStudents']; ?></td>
+                    <td><?php echo $submission_stats['submittedStudents']; ?></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Detailed Marks Table -->
+        <h2>Detailed Student Marks</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Marks Obtained</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($assignment_details as $detail): ?>
+                    <tr>
+                        <td><?php echo $detail['StudentID']; ?></td>
+                        <td><?php echo $detail['StudentName']; ?></td>
+                        <td><?php echo $detail['MarksObtained'] !== null ? $detail['MarksObtained'] : 'Not Submitted'; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</div>
 </body>
 </html>
