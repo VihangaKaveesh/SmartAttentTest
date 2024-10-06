@@ -18,7 +18,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'student';
     $_SESSION['student_id'] = $row['StudentID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Student/Student_Dashboard.html");
+    header("Location: ../Student/studentDashboard.php");
     exit();
 }
 
@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'teacher';
     $_SESSION['teacher_id'] = $row['TeacherID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Teacher/Teacher_Dashboard.html");
+    header("Location: ../Teacher/teacherDashboard.php");
     exit();
 }
 
@@ -50,7 +50,7 @@ if ($result->num_rows > 0) {
     $_SESSION['role'] = 'management';
     $_SESSION['management_id'] = $row['ManagementID'];
     $_SESSION['name'] = $row['FirstName'] . ' ' . $row['LastName'];
-    header("Location: ../Management/management_dashboard.html");
+    header("Location: ../Management/managementDashboard.php");
     exit();
 }
 
