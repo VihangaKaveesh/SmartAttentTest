@@ -445,6 +445,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
                     <a href="?action=edit&id=' . $row['ModuleID'] . '">Edit</a> | 
                     <a href="?action=delete&id=' . $row['ModuleID'] . '" onclick="return confirm(\'Are you sure you want to delete this module?\')">Delete</a> | 
                     <a href="marksAnalysis.php?module_id=' . $row['ModuleID'] . '">View Marks Analysis</a>
+                    <a href="bulkEmail.php?module_id=' . $row['ModuleID'] . '">General Notice</a>
                 </td>';
                 echo '</tr>';
             }
