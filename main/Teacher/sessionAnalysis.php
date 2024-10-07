@@ -123,6 +123,10 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="en">
 <head>
+      <!-- Font Awesome for icons -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for the Orbitron font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Session Attendance Analysis</title>
@@ -311,10 +315,95 @@ canvas {
         font-size: 0.85em;
     }
 }
+ /* Hamburger Menu Icon */
+ .hamburger {
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            height: 100%;
+            width: 100vw;
+            background-color: #4CAF50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: left 0.4s ease;
+            z-index: 1500;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            width: 100%;
+            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+            position: relative;
+        }
+
+        /* Modern Hover Animation */
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-links a:hover {
+            background-color: #388E3C;
+            border-radius: 5px;
+            transform: translateY(-5px);
+        }
 
     </style>
 </head>
 <body>
+      <!-- Hamburger Icon -->
+<div class="hamburger">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar">
+    <div class="nav-links">
+        <a href="teacher_profile.php">Profile</a>
+        <a href="Teacher-qr-generator.php">QR Code</a>
+        <a href="Assignments-upload.php">Upload Assignments</a>
+        <a href="sessionAnalysis.php">Session Analysis</a>
+        <a href="lecture_material_upload.php">Lecture Materials</a>
+        <a href="../login/login.html">Logout</a>
+    </div>
+</div>
     <div class="container">
         <h1>Attendance Analysis</h1>
 
@@ -392,5 +481,10 @@ canvas {
             </table>
         <?php endif; ?>
     </div>
+    <script>
+    document.querySelector('.hamburger').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('active');
+    });
+</script>
 </body>
 </html>
