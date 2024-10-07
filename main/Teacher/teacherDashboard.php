@@ -98,17 +98,22 @@ h1 {
 
 .dashboard-scroll {
     display: flex;
-    overflow-x: auto; /* Horizontal scroll */
+    overflow-x: auto; /* Enable horizontal scrolling */
     padding: 30px;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    scroll-snap-type: x mandatory; /* Snap scrolling for the cards */
+    scrollbar-width: thin; /* Hide scrollbar for Firefox */
     width: 100%; /* Full width */
     gap: 30px; /* Space between items */
 }
 
 .dashboard-scroll::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for Chrome, Safari, and Edge */
+    height: 8px;
 }
+.dashboard-scroll::-webkit-scrollbar-thumb {
+    background-color: #0073e6; /* Blue scrollbar thumb color */
+    border-radius: 10px; /* Round scrollbar thumb */
+}
+
 
 .dashboard-item {
     background-color: #fff; /* White background for items */

@@ -89,6 +89,25 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
             width: 100%;
         }
 
+        .dashboard-scroll {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding: 30px;
+    scroll-snap-type: x mandatory; /* Snap scrolling for the cards */
+    scrollbar-width: thin; /* Hide scrollbar for Firefox */
+    width: 100%; /* Full width */
+    gap: 30px; /* Space between items */
+}
+
+.dashboard-scroll::-webkit-scrollbar {
+    height: 8px; /* Adjust scrollbar height for horizontal scrolling */
+}
+
+.dashboard-scroll::-webkit-scrollbar-thumb {
+    background-color: #0073e6; /* Blue scrollbar thumb color */
+    border-radius: 10px; /* Round scrollbar thumb */
+}
+
         h1 {
             font-size: 4rem;
             margin-bottom: 40px;
@@ -102,6 +121,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
             justify-content: center; /* Center buttons */
             gap: 20px; /* Space between buttons */
             padding: 20px;
+            
         }
 
         button {
