@@ -34,6 +34,33 @@ $stmt->bind_result($moduleId);
 $stmt->fetch();
 $stmt->close();
 
+// Fetch attendance percentage
+function getAttendancePercentage($conn, $studentId) {
+    // Query to get the attendance details for the student
+    $query = "SELECT Status FROM Attendance WHERE StudentID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $studentId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $totalClasses = $result->num_rows;
+    $presentCount = 0;
+
+    while ($row = $result->fetch_assoc()) {
+        if ($row['Status'] === 'present') {
+            $presentCount++;
+        }
+    }
+
+    return ($totalClasses > 0) ? ($presentCount / $totalClasses) * 100 : 0;
+}
+
+$attendancePercentage = getAttendancePercentage($conn, $studentId);
+if ($attendancePercentage < 80) {
+    echo "<script>alert('You must have an attendance percentage of at least 80% to send an email.');</script>";
+    exit();
+}
+
 // Query to select assignments for the logged-in student's module
 $sql = "SELECT a.AssignmentID, a.AssignmentName, a.filename, a.DueDate, a.HandoutDate, 
                s.filename AS submitted_file, s.marks
