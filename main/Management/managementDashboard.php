@@ -193,10 +193,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
 <!-- Sidebar Menu -->
 <div class="sidebar">
     <div class="nav-links">
-        <a href="manageStudents.php">Students</a>
-        <a href="addModules.php">Modules</a>
-        <a href="manageTeachers.php">Teachers</a>
-        <a href="notice.php">Notices</a>
+        <a href="manageStudents.php">Students</a><br><br><br><br><br>
+        <a href="addModules.php">Modules</a><br><br><br><br><br>
+        <a href="manageTeachers.php">Teachers</a><br><br><br><br><br>
+        <a href="notice.php">Notices</a><br><br><br><br><br>
         <a href="../login/login.html">Logout</a>
     </div>
 </div>

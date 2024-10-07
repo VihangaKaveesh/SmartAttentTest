@@ -194,11 +194,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
 <!-- Sidebar Menu -->
 <div class="sidebar">
     <div class="nav-links">
-        <a href="student_profile.php">Profile</a>
-        <a href="qr-scanner.html">QR Scanner</a>
-        <a href="Assignments.php">Assignments</a>
-        <a href="download_lecture_materials.php">Lecture Materials</a>
-        <a href="notice_board.php">Notice Board</a>
+        <a href="student_profile.php">Profile</a><br><br><br><br><br>
+        <a href="qr-scanner.html">QR Scanner</a><br><br><br><br><br>
+        <a href="Assignments.php">Assignments</a><br><br><br><br><br>
+        <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
+        <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
         <a href="../login/login.html">Logout</a>
     </div>
 </div>
