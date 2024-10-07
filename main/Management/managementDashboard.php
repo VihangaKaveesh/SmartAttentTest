@@ -197,6 +197,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
         <a href="addModules.php">Modules</a><br><br><br><br><br>
         <a href="manageTeachers.php">Teachers</a><br><br><br><br><br>
         <a href="notice.php">Notices</a><br><br><br><br><br>
+        <a href="addLabs.php">Labs</a><br><br><br><br><br>
         <a href="../login/login.html">Logout</a>
     </div>
 </div>
