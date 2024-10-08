@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in as management
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
-    header("Location: ../login/login.html");
+    header("Location: ../login/login.php");
     exit();
 }
 
