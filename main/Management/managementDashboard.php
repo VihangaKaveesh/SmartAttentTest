@@ -51,7 +51,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
             left: -100%;
             height: 100%;
             width: 100vw;
-            background-color: #4CAF50;
+            background-color:#a03aba;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -98,7 +98,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
         }
 
         .nav-links a:hover {
-            background-color: #388E3C;
+            background-color: #d448f7;
             border-radius: 5px;
             transform: translateY(-5px);
         }
