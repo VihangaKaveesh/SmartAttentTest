@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in as a teacher
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
-    header("Location: ../login/login.html");
+    header("Location: ../login/login.php");
     exit();
 }
 ?>
@@ -224,7 +224,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
             <i class="fas fa-upload"></i>
             <p>Lecture Materials</p>
         </a>
-        <a href="../login/login.html" class="dashboard-item" title="Log out of your account">
+        <a href="../login/login.php" class="dashboard-item" title="Log out of your account">
             <i class="fas fa-sign-out-alt"></i>
             <p>Logout</p>
         </a>

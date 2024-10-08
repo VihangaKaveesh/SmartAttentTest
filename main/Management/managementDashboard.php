@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in as management
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
-    header("Location: ../login/login.html");
+    header("Location: ../login/login.php");
     exit();
 }
 ?>
@@ -225,7 +225,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
             <i class="fas fa-flask"></i>
             <p>Labs</p>
         </a>
-        <a href="../login/login.html" class="dashboard-item">
+        <a href="../login/login.php" class="dashboard-item">
             <i class="fas fa-sign-out-alt"></i>
             <p>Logout</p>
         </a>

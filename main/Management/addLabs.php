@@ -4,7 +4,7 @@ session_start();
 // Check if the user is logged in as management
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
     // If not logged in or not management, redirect to the login page
-    header("Location: ../login/login.html");
+    header("Location: ../login/login.php");
     exit();
 }
 
