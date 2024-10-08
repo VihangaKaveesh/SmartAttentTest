@@ -275,7 +275,7 @@ td {
         <a href="manageTeachers.php">Teachers</a><br><br><br><br><br>
         <a href="notice.php">Notices</a><br><br><br><br><br>
         <a href="addLabs.php">Labs</a><br><br><br><br><br>
-        <a href="../login/login.html">Logout</a>
+        <a href="../login/login.php">Logout</a>
     </div>
 </div>
 <h2>Lab Management</h2>

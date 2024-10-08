@@ -318,7 +318,7 @@ $module_name = $module_id ? getModuleName($module_id) : '';
         <a href="manageTeachers.php">Teachers</a><br><br><br><br><br>
         <a href="notice.php">Notices</a><br><br><br><br><br>
         <a href="addLabs.php">Labs</a><br><br><br><br><br>
-        <a href="../login/login.html">Logout</a>
+        <a href="../login/login.php">Logout</a>
     </div>
 </div>
 <div class="container">
