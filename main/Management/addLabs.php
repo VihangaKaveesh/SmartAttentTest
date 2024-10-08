@@ -102,149 +102,43 @@ if (isset($_GET['edit'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-     /* Global Styling */
+/* General Styling */
 body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    background-color: #f0f4f8;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Container for the whole form and table */
-.container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 30px;
-    background-color: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-}
-
-/* Card structure for form and content */
-.card {
-    padding: 25px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-}
-
-/* Header Titles */
 h2, h3 {
-    text-align: center;
-    color: #4CAF50;
-    font-size: 24px;
-    margin-bottom: 25px;
+    color: #5a4dcf;
+    text-align: center; /* Optional: Center align headings */
 }
 
-/* Form Styling */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    margin-top: 10px;
-}
-
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px;
-    width: 100%;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #388E3C;
-}
-
-/* Success and Error Messages */
-.success-message, .error-message {
-    text-align: center;
-    font-size: 16px;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.success-message {
-    color: green;
-    background-color: #eaf5ea;
-}
-
-.error-message {
-    color: red;
-    background-color: #f5eaea;
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-table th, table td {
-    padding: 16px;
-    text-align: left;
-    border: 1px solid #ddd;
-    font-size: 16px;
-}
-
-table th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-table td a {
-    color: #4CAF50;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-table td a:hover {
-    text-decoration: underline;
-    color: #388E3C;
-}
-
-/* Sidebar Menu */
+/* Hamburger Menu Icon */
 .hamburger {
     font-size: 2rem;
     cursor: pointer;
-    position: fixed;
-    top: 20px;
-    left: 20px;
+    margin: 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2000;
 }
 
+/* Sidebar Styling */
 .sidebar {
     position: fixed;
     top: 0;
     left: -100%;
     height: 100%;
     width: 100vw;
-    background-color: #4CAF50;
+    background-color: #a03aba;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    transition: left 0.3s ease;
+    transition: left 0.4s ease;
     z-index: 1500;
 }
 
@@ -255,38 +149,120 @@ table td a:hover {
 .nav-links a {
     color: white;
     padding: 20px;
-    margin: 15px 0;
-    font-size: 20px;
+    margin: 10px 0;
     text-decoration: none;
+    font-weight: 500;
+    font-size: 1.5rem;
     text-align: center;
     width: 100%;
-    transition: all 0.3s;
+    transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+    position: relative;
+}
+
+/* Modern Hover Animation */
+.nav-links a::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
 }
 
 .nav-links a:hover {
-    background-color: #388E3C;
-    border-radius: 8px;
-    transform: scale(1.05);
+    background-color: #d448f7;
+    border-radius: 5px;
+    transform: translateY(-5px);
+}
+
+.nav-links a:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Form Styling */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px; /* Updated to match theme */
+    max-width: 500px;
+    margin: 20px auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    background-color: #5a4dcf; /* Updated color to match theme */
+    color: white;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px; /* Added padding for better UX */
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #4a3db0;
+}
+
+/* Table Styling */
+table {
+    width: 80%; /* Updated to match theme */
+    border-collapse: collapse;
+    margin: 20px auto;
+    background-color: #fff; /* Ensured consistent styling */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #5a4dcf; /* Updated color to match theme */
+    color: white;
+}
+
+td {
+    color: #333;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        padding: 20px;
+    form {
+        padding: 10px;
     }
+
     table th, table td {
-        font-size: 14px;
-        padding: 12px;
-    }
-    button {
-        padding: 12px;
+        font-size: 12px;
+        padding: 8px;
     }
 }
 
     </style>
 </head>
 <body>
-    <!-- Hamburger Icon -->
+<!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>

@@ -142,58 +142,109 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #FFE3B3;
+     
+     body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
             color: #26648E;
-            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #53D2DC;
-            color: #26648E;
+
+        h2 {
+            color: #6A1B9A;
+            text-align: center;
         }
-        th, td {
-            border: 1px solid #4F8FC0;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #26648E;
-            color: #FFE3B3;
-        }
-        td {
-            background-color: #FFE3B3;
-        }
-        .message {
-            color: green;
-        }
-        .error {
-            color: red;
-        }
+
         form {
-            margin-bottom: 20px;
+            width: 60%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        input[type="text"], input[type="password"], input[type="email"], select {
+
+        form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: #26648E;
+        }
+
+        form input[type="text"], form input[type="password"], form input[type="email"] {
             width: 100%;
             padding: 10px;
-            margin: 5px 0 10px 0;
-            border: 1px solid #4F8FC0;
-            border-radius: 4px;
-            background-color: #FFE3B3;
-            color: #26648E;
+            margin-bottom: 20px;
+            border: 2px solid #d1d1d1;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
         }
-        input[type="submit"] {
-            background-color: #26648E;
-            color: #FFE3B3;
+
+        form input[type="text"]:focus, form input[type="password"]:focus, form input[type="email"]:focus {
+            border-color: #6A1B9A;
+        }
+
+        form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #6A1B9A;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
             border: none;
-            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        input[type="submit"]:hover {
-            background-color: #4F8FC0;
+
+        form input[type="submit"]:hover {
+            background-color: #8E24AA;
         }
+
+        table {
+            width: 90%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #26648E;
+            color: white;
+            font-weight: bold;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        table tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        table a {
+            color: #6A1B9A;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        table a:hover {
+            text-decoration: underline;
+        }
+
          /* Hamburger Menu Icon */
          .hamburger {
             font-size: 2rem;
@@ -263,10 +314,21 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
             border-radius: 5px;
             transform: translateY(-5px);
         }
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, form {
+                width: 100%;
+                margin: 0;
+            }
+
+            table th, table td {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Hamburger Icon -->
+   <!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>

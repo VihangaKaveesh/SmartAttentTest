@@ -174,276 +174,192 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-       body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #FFE3B3 0%, #53D2DC 100%);
-            color: #26648E;
-            margin: 0;
-            padding: 20px;
-        }
+                body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
 
-        h1 {
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 30px;
-        }
+/* General Styling */
+h1 {
+    text-align: center;
+    color: #5a4dcf;
+    margin: 30px 0;
+}
 
-        form {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
-        }
+.error {
+    text-align: center;
+    background-color: #f2dede;
+    color: #a94442;
+    padding: 10px;
+    margin: 20px auto;
+    border-radius: 5px;
+    width: 80%;
+}
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
+.success {
+    text-align: center;
+    background-color: #dff0d8;
+    color: #3c763d;
+    padding: 10px;
+    margin: 20px auto;
+    border-radius: 5px;
+    width: 80%;
+}
 
-        input[type="text"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0 15px 0;
-            border: 1px solid #4F8FC0;
-            border-radius: 5px;
-            background-color: #FFE3B3;
-            color: #26648E;
-            transition: border-color 0.3s;
-        }
+/* Form and Table Styles */
+form {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
 
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        select:focus {
-            border-color: #26648E;
-            outline: none;
-        }
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
 
-        input[type="submit"] {
-            background-color: #26648E;
-            color: #FFE3B3;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            width: 100%; /* Make buttons full width */
-        }
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-        input[type="submit"]:hover {
-            background-color: #4F8FC0;
-            transform: translateY(-2px);
-        }
+input[type="submit"] {
+    background-color: #5a4dcf;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+input[type="submit"]:hover {
+    background-color: #4a3db0;
+}
 
-        th, td {
-            border: 1px solid #4F8FC0;
-            padding: 10px;
-            text-align: left;
-        }
+/* Table Styling */
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-        th {
-            background-color: #26648E;
-            color: #FFE3B3;
-        }
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
 
-        td {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
+th {
+    background-color: #5a4dcf;
+    color: white;
+}
 
-        .success {
-            color: green;
-            text-align: center;
-            margin: 10px 0;
-        }
+td {
+    color: #333;
+}
 
-        .error {
-            color: red;
-            text-align: center;
-            margin: 10px 0;
-        }
+td a {
+    text-decoration: none;
+    color: #5a4dcf;
+    font-weight: bold;
+}
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
+td a:hover {
+    text-decoration: underline;
+}
 
-            input[type="submit"] {
-                padding: 10px;
-            }
+/* Hamburger Menu Icon */
+.hamburger {
+    font-size: 2rem;
+    cursor: pointer;
+    margin: 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2000;
+}
 
-            table {
-                font-size: 14px;
-            }
-        }
+/* Sidebar Styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 100vw;
+    background-color: #a03aba;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: left 0.4s ease;
+    z-index: 1500;
+}
 
-        /* Navigation Bar Styles */
-        .navbar {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping for responsiveness */
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 1rem;
-            position: relative; /* For positioning the dropdown */
-        }
+.sidebar.active {
+    left: 0;
+}
 
-        .logo {
-            color: white;
-            font-size: 1.5rem;
-            flex: 1; /* Allow logo to take available space */
-        }
+.nav-links a {
+    color: white;
+    padding: 20px;
+    margin: 10px 0;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    width: 100%;
+    transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+    position: relative;
+}
 
-        .nav-links {
-            list-style: none;
-            display: flex;
-            margin: 0;
-            padding: 0;
-            flex: 2; /* Allow nav links to take available space */
-            justify-content: flex-end; /* Align to the right */
-        }
+/* Modern Hover Animation */
+.nav-links a::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
 
-        .nav-links li {
-            margin-left: 1rem;
-        }
+.nav-links a:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 12px; /* Add padding for better click area */
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+.nav-links a:hover {
+    background-color: #d448f7;
+    border-radius: 5px;
+    transform: translateY(-5px);
+}
 
-        .nav-links a:hover {
-            background-color: #ff4081; /* Change to your preferred hover color */
-        }
+/* Responsive Styling */
+@media (max-width: 768px) {
+    table, form {
+        width: 100%;
+        margin: 0;
+    }
 
-        /* Hamburger Menu Styles */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-        }
+    table th, table td {
+        font-size: 0.9rem;
+    }
+}
 
-        .hamburger .line {
-            height: 3px;
-            width: 25px;
-            background-color: white;
-            margin: 3px 0;
-        }
-
-        /* Mobile Responsive Styles */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                position: absolute;
-                top: 60px; /* Adjust based on navbar height */
-                left: 0;
-                background-color: #333;
-                z-index: 10;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-        }
-
-        /* Additional Styles for Page Content */
-        .container {
-            padding: 20px;
-        }
-
-        /* Responsive Table */
-        @media (max-width: 768px) {
-            table {
-                font-size: 14px;
-            }
-        }
-         /* Hamburger Menu Icon */
-         .hamburger {
-            font-size: 2rem;
-            cursor: pointer;
-            margin: 10px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 2000;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            height: 100%;
-            width: 100vw;
-            background-color:#a03aba;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: left 0.4s ease;
-            z-index: 1500;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .nav-links a {
-            color: white;
-            padding: 20px;
-            margin: 10px 0;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            width: 100%;
-            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
-            position: relative;
-        }
-
-        /* Modern Hover Animation */
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #fff;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-links a:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        .nav-links a:hover {
-            background-color: #d448f7;
-            border-radius: 5px;
-            transform: translateY(-5px);
-        }
     </style>
 </head>
 <body>
@@ -463,7 +379,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
         <a href="../login/login.html">Logout</a>
     </div>
 </div>
-
 <h1>Manage Modules</h1>
 
 <!-- Form to add or update a module -->
@@ -514,7 +429,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
                 echo '<td>
                     <a href="?action=edit&id=' . $row['ModuleID'] . '">Edit</a> | 
                     <a href="?action=delete&id=' . $row['ModuleID'] . '" onclick="return confirm(\'Are you sure you want to delete this module?\')">Delete</a> | 
-                    <a href="marksAnalysis.php?module_id=' . $row['ModuleID'] . '">View Marks Analysis</a>
+                    <a href="marksAnalysis.php?module_id=' . $row['ModuleID'] . '">View Marks Analysis</a> |
                     <a href="bulkEmail.php?module_id=' . $row['ModuleID'] . '">General Notice</a>
                 </td>';
                 echo '</tr>';

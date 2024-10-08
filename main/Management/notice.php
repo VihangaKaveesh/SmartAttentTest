@@ -78,79 +78,175 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-         /* Hamburger Menu Icon */
-         .hamburger {
-            font-size: 2rem;
-            cursor: pointer;
-            margin: 10px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 2000;
-        }
+       body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
 
-        /* Sidebar Styling */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            height: 100%;
-            width: 100vw;
-            background-color:#a03aba;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: left 0.4s ease;
-            z-index: 1500;
-        }
+/* Card and form container */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        .sidebar.active {
-            left: 0;
-        }
+.card {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
 
-        .nav-links a {
-            color: white;
-            padding: 20px;
-            margin: 10px 0;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            width: 100%;
-            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
-            position: relative;
-        }
+.card-header {
+    background-color: #a03aba; /* Match the sidebar color */
+    color: white;
+    padding: 15px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+}
 
-        /* Modern Hover Animation */
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #fff;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
-        }
+.card-body {
+    padding: 20px;
+}
 
-        .nav-links a:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
 
-        .nav-links a:hover {
-            background-color: #d448f7;
-            border-radius: 5px;
-            transform: translateY(-5px);
-        }
+/* Form elements */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-control-file {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #a03aba; /* Use the primary color from sidebar */
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #d448f7; /* Use the hover color */
+}
+
+.btn-warning {
+    background-color: #d448f7; /* Adjust warning button color */
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #a03aba; /* Reverse the hover effect */
+}
+
+/* Sidebar and navigation */
+.hamburger {
+    font-size: 2rem;
+    cursor: pointer;
+    margin: 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2000;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 100vw;
+    background-color: #a03aba; /* Sidebar color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: left 0.4s ease;
+    z-index: 1500;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.nav-links a {
+    color: white;
+    padding: 20px;
+    margin: 10px 0;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    width: 100%;
+    transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+    position: relative;
+}
+
+.nav-links a::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.nav-links a:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.nav-links a:hover {
+    background-color: #d448f7;
+    border-radius: 5px;
+    transform: translateY(-5px);
+}
+
     </style>
 </head>
 <body>
-    <!-- Hamburger Icon -->
+   <!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>
@@ -189,9 +285,10 @@ if (isset($_POST['submit'])) {
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
+
     <script>
     // Toggle Sidebar
     const hamburger = document.querySelector('.hamburger');
