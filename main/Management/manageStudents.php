@@ -146,57 +146,108 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #FFE3B3;
-            color: #26648E;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* General Styling */
+        h1 {
+            text-align: center;
+            color: #5a4dcf;
+            margin: 30px 0;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 20px auto;
             padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
         }
-        table {
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, select {
             width: 100%;
-            border-collapse: collapse;
-            background-color: #53D2DC;
-            color: #26648E;
-        }
-        th, td {
-            border: 1px solid #4F8FC0;
             padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #5a4dcf;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #4a3db0;
+        }
+
+        /* Table Styling */
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
             text-align: left;
         }
+
         th {
-            background-color: #26648E;
-            color: #FFE3B3;
+            background-color: #5a4dcf;
+            color: white;
         }
+
         td {
-            background-color: #FFE3B3;
+            color: #333;
         }
+
+        td a {
+            text-decoration: none;
+            color: #5a4dcf;
+            font-weight: bold;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
         .message {
-            color: green;
-        }
-        .error {
-            color: red;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input[type="text"], input[type="password"], input[type="email"], select {
-            width: 100%;
+            text-align: center;
+            background-color: #dff0d8;
+            color: #3c763d;
             padding: 10px;
-            margin: 5px 0 10px 0;
-            border: 1px solid #4F8FC0;
-            border-radius: 4px;
-            background-color: #FFE3B3;
-            color: #26648E;
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 80%;
         }
-        input[type="submit"] {
-            background-color: #26648E;
-            color: #FFE3B3;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
+
+        .error {
+            text-align: center;
+            background-color: #f2dede;
+            color: #a94442;
+            padding: 10px;
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 80%;
         }
-        input[type="submit"]:hover {
-            background-color: #4F8FC0;
-        }
+
          /* Hamburger Menu Icon */
          .hamburger {
             font-size: 2rem;
@@ -266,10 +317,21 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
             border-radius: 5px;
             transform: translateY(-5px);
         }
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            table, form {
+                width: 100%;
+                margin: 0;
+            }
+
+            table th, table td {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Hamburger Icon -->
+ <!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>

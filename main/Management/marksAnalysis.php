@@ -305,7 +305,7 @@ $module_name = $module_id ? getModuleName($module_id) : '';
     </style>
 </head>
 <body>
-        <!-- Hamburger Icon -->
+<!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>

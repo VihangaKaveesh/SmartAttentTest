@@ -340,7 +340,7 @@ $attendance_percentage = ($total_classes > 0) ? ($present_count / $total_classes
         </style>
     </head>
     <body>
-            <!-- Hamburger Icon -->
+<!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>
