@@ -119,8 +119,91 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-                /* Hamburger Menu Icon */
-                .hamburger {
+                /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Card styling */
+        .card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control, .form-control-file, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Sidebar Styling */
+        .hamburger {
             font-size: 2rem;
             cursor: pointer;
             margin: 10px;
@@ -130,7 +213,6 @@ if (isset($_POST['submit'])) {
             z-index: 2000;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -157,14 +239,12 @@ if (isset($_POST['submit'])) {
             text-decoration: none;
             font-weight: 500;
             font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
             text-align: center;
             width: 100%;
             transition: background 0.3s, padding 0.3s, transform 0.3s ease;
             position: relative;
         }
 
-        /* Modern Hover Animation */
         .nav-links a::before {
             content: '';
             position: absolute;
@@ -189,90 +269,12 @@ if (isset($_POST['submit'])) {
             transform: translateY(-5px);
         }
 
-        /* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa; /* Light background color */
-}
-
-.container {
-    max-width: 800px; /* Maximum width of the container */
-    margin: 0 auto; /* Center the container */
-    padding: 20px; /* Add padding */
-}
-
-/* Card Styles */
-.card {
-    border: 1px solid #dee2e6; /* Border color */
-    border-radius: 0.25rem; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    margin-bottom: 30px; /* Spacing between cards */
-}
-
-.card-header {
-    background-color: #4CAF50; /* Bootstrap primary color */
-    color: white; /* White text */
-    padding: 15px; /* Padding in header */
-    text-align: center; /* Center align text */
-}
-
-.card-title {
-    margin: 0; /* Remove margin */
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 15px; /* Space between form groups */
-}
-
-label {
-    font-weight: bold; /* Bold labels */
-}
-
-/* Button Styles */
-.btn {
-    margin-top: 10px; /* Space above buttons */
-}
-
-.btn-block {
-    width: 100%; /* Full width buttons */
-}
-
-/* Table Styles */
-.table {
-    width: 100%; /* Full width table */
-    border-collapse: collapse; /* Collapse borders */
-}
-
-.table th, .table td {
-    padding: 12px; /* Padding in table cells */
-    text-align: left; /* Align text to the left */
-}
-
-.table th {
-    background-color: #4CAF50; /* Header background color */
-    color: white; /* Header text color */
-}
-
-.table-bordered th, .table-bordered td {
-    border: 1px solid #dee2e6; /* Border color */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f2f2f2; /* Light grey background for odd rows */
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px; /* Less padding on smaller screens */
-    }
-    
-    .btn {
-        margin-top: 5px; /* Less space above buttons */
-    }
-}
-
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+        }
 </style>
 </head>
 <body>
@@ -285,11 +287,11 @@ label {
 <!-- Sidebar Menu -->
 <div class="sidebar">
     <div class="nav-links">
-        <a href="student_profile.php">Profile</a><br><br><br><br><br>
-        <a href="qr-scanner.html">QR Scanner</a><br><br><br><br><br>
-        <a href="Assignments.php">Assignments</a><br><br><br><br><br>
-        <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
-        <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
+        <a href="teacher_profile.php">Profile</a><br><br><br><br><br>
+        <a href="Teacher-qr-generator.php">QR Code</a><br><br><br><br><br>
+        <a href="Assignments-upload.php">Upload Assignments</a><br><br><br><br><br>
+        <a href="sessionAnalysis.php">Session Analysis</a><br><br><br><br><br>
+        <a href="lecture_material_upload.php">Lecture Materials</a><br><br><br><br><br>
         <a href="../login/login.php">Logout</a>
     </div>
 </div>
