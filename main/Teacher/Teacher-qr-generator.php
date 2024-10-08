@@ -199,11 +199,11 @@ button:hover {
 <!-- Sidebar Menu -->
 <div class="sidebar">
     <div class="nav-links">
-        <a href="teacher_profile.php">Profile</a>
-        <a href="Teacher-qr-generator.php">QR Code</a>
-        <a href="Assignments-upload.php">Upload Assignments</a>
-        <a href="sessionAnalysis.php">Session Analysis</a>
-        <a href="lecture_material_upload.php">Lecture Materials</a>
+        <a href="teacher_profile.php">Profile</a><br><br><br><br><br>
+        <a href="Teacher-qr-generator.php">QR Code</a><br><br><br><br><br>
+        <a href="Assignments-upload.php">Upload Assignments</a><br><br><br><br><br>
+        <a href="sessionAnalysis.php">Session Analysis</a><br><br><br><br><br>
+        <a href="lecture_material_upload.php">Lecture Materials</a><br><br><br><br><br>
         <a href="../login/login.html">Logout</a>
     </div>
 </div>

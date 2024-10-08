@@ -102,75 +102,187 @@ if (isset($_GET['edit'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-         /* Hamburger Menu Icon */
-         .hamburger {
-            font-size: 2rem;
-            cursor: pointer;
-            margin: 10px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 2000;
-        }
+     /* Global Styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f4f8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-        /* Sidebar Styling */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            height: 100%;
-            width: 100vw;
-            background-color:#a03aba;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: left 0.4s ease;
-            z-index: 1500;
-        }
+/* Container for the whole form and table */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
 
-        .sidebar.active {
-            left: 0;
-        }
+/* Card structure for form and content */
+.card {
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
 
-        .nav-links a {
-            color: white;
-            padding: 20px;
-            margin: 10px 0;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            width: 100%;
-            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
-            position: relative;
-        }
+/* Header Titles */
+h2, h3 {
+    text-align: center;
+    color: #4CAF50;
+    font-size: 24px;
+    margin-bottom: 25px;
+}
 
-        /* Modern Hover Animation */
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #fff;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
-        }
+/* Form Styling */
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .nav-links a:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
+.form-group label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
 
-        .nav-links a:hover {
-            background-color: #d448f7;
-            border-radius: 5px;
-            transform: translateY(-5px);
-        }
+.form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #388E3C;
+}
+
+/* Success and Error Messages */
+.success-message, .error-message {
+    text-align: center;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.success-message {
+    color: green;
+    background-color: #eaf5ea;
+}
+
+.error-message {
+    color: red;
+    background-color: #f5eaea;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 16px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table td a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+table td a:hover {
+    text-decoration: underline;
+    color: #388E3C;
+}
+
+/* Sidebar Menu */
+.hamburger {
+    font-size: 2rem;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 100vw;
+    background-color: #4CAF50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: left 0.3s ease;
+    z-index: 1500;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.nav-links a {
+    color: white;
+    padding: 20px;
+    margin: 15px 0;
+    font-size: 20px;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #388E3C;
+    border-radius: 8px;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    table th, table td {
+        font-size: 14px;
+        padding: 12px;
+    }
+    button {
+        padding: 12px;
+    }
+}
+
     </style>
 </head>
 <body>
