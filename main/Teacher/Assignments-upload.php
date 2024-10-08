@@ -110,106 +110,17 @@ if (isset($_POST['submit'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>PDF Upload Form</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload PDF File for Assignment</title>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts for the Orbitron font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-             body {
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            /* font-family: 'Orbitron', sans-serif; */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* Center the container */
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .card {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .form-control, .form-control-file, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #388E3C;
-        }
-
-        h4 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table th, table td {
-            padding: 12px;
-            border: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        table td a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        table td a:hover {
-            text-decoration: underline;
-        }
-
-        /* Sidebar Styling */
-        .hamburger {
+                /* Hamburger Menu Icon */
+                .hamburger {
             font-size: 2rem;
             cursor: pointer;
             margin: 10px;
@@ -219,6 +130,7 @@ if (isset($_POST['submit'])) {
             z-index: 2000;
         }
 
+        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -245,12 +157,14 @@ if (isset($_POST['submit'])) {
             text-decoration: none;
             font-weight: 500;
             font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
             text-align: center;
             width: 100%;
             transition: background 0.3s, padding 0.3s, transform 0.3s ease;
             position: relative;
         }
 
+        /* Modern Hover Animation */
         .nav-links a::before {
             content: '';
             position: absolute;
@@ -274,10 +188,95 @@ if (isset($_POST['submit'])) {
             border-radius: 5px;
             transform: translateY(-5px);
         }
-    </style>
+
+        /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light background color */
+}
+
+.container {
+    max-width: 800px; /* Maximum width of the container */
+    margin: 0 auto; /* Center the container */
+    padding: 20px; /* Add padding */
+}
+
+/* Card Styles */
+.card {
+    border: 1px solid #dee2e6; /* Border color */
+    border-radius: 0.25rem; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin-bottom: 30px; /* Spacing between cards */
+}
+
+.card-header {
+    background-color: #4CAF50; /* Bootstrap primary color */
+    color: white; /* White text */
+    padding: 15px; /* Padding in header */
+    text-align: center; /* Center align text */
+}
+
+.card-title {
+    margin: 0; /* Remove margin */
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px; /* Space between form groups */
+}
+
+label {
+    font-weight: bold; /* Bold labels */
+}
+
+/* Button Styles */
+.btn {
+    margin-top: 10px; /* Space above buttons */
+}
+
+.btn-block {
+    width: 100%; /* Full width buttons */
+}
+
+/* Table Styles */
+.table {
+    width: 100%; /* Full width table */
+    border-collapse: collapse; /* Collapse borders */
+}
+
+.table th, .table td {
+    padding: 12px; /* Padding in table cells */
+    text-align: left; /* Align text to the left */
+}
+
+.table th {
+    background-color: #4CAF50; /* Header background color */
+    color: white; /* Header text color */
+}
+
+.table-bordered th, .table-bordered td {
+    border: 1px solid #dee2e6; /* Border color */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2; /* Light grey background for odd rows */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px; /* Less padding on smaller screens */
+    }
+    
+    .btn {
+        margin-top: 5px; /* Less space above buttons */
+    }
+}
+
+</style>
 </head>
 <body>
-
+    
 <!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
@@ -286,94 +285,109 @@ if (isset($_POST['submit'])) {
 <!-- Sidebar Menu -->
 <div class="sidebar">
     <div class="nav-links">
-        <a href="teacher_profile.php">Profile</a><br><br><br><br><br>
-        <a href="Teacher-qr-generator.php">QR Code</a><br><br><br><br><br>
-        <a href="Assignments-upload.php">Upload Assignments</a><br><br><br><br><br>
-        <a href="sessionAnalysis.php">Session Analysis</a><br><br><br><br><br>
-        <a href="lecture_material_upload.php">Lecture Materials</a><br><br><br><br><br>
-        <a href="../login/login.html">Logout</a>
+        <a href="student_profile.php">Profile</a><br><br><br><br><br>
+        <a href="qr-scanner.html">QR Scanner</a><br><br><br><br><br>
+        <a href="Assignments.php">Assignments</a><br><br><br><br><br>
+        <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
+        <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
+        <a href="../login/login.php">Logout</a>
     </div>
 </div>
 
-<!-- Main Content -->
-<div class="container">
-    <!-- Assignment Upload Form -->
-    <div class="card mt-5">
-        <div class="card-header">
-            <h4 class="card-title text-center">Upload PDF File for Assignment</h4>
+    <div class="container">
+        <!-- Assignment Upload Form -->
+        <div class="card mt-5">
+            <div class="card-header">
+                <h4 class="card-title text-center">Upload PDF File for Assignment</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="module">Select Module:</label>
+                        <select name="module" class="form-control" id="module" required>
+                            <option value="">Select a module</option>
+                            <?php
+                            $conn = connectDB();
+                            $modules = getModules($conn, $teacherID); // Pass teacher ID to filter modules
+                            foreach ($modules as $module) {
+                                echo "<option value='" . $module['ModuleID'] . "'>" . $module['ModuleName'] . "</option>";
+                            }
+                            $conn->close();
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentName">Assignment Name:</label>
+                        <input type="text" name="assignmentName" class="form-control" id="assignmentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Due Date:</label>
+                        <input type="datetime-local" name="dueDate" class="form-control" id="dueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdfFile">Select PDF File:</label>
+                        <input type="file" name="pdfFile" class="form-control-file" id="pdfFile" required>
+                    </div>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block">Upload File</button>
+                    <button type="reset" class="btn btn-warning btn-block">Reset</button>
+                </form>
+            </div>
         </div>
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="module">Select Module:</label>
-                    <select name="module" class="form-control" id="module" required>
-                        <option value="">Select a module</option>
-                        <?php
-                        $conn = connectDB();
-                        $modules = getModules($conn, $teacherID);
-                        foreach ($modules as $module) {
-                            echo "<option value=\"" . $module['ModuleID'] . "\">" . $module['ModuleName'] . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="assignmentName">Assignment Name:</label>
-                    <input type="text" name="assignmentName" class="form-control" id="assignmentName" required>
-                </div>
-                <div class="form-group">
-                    <label for="pdfFile">Select PDF File:</label>
-                    <input type="file" name="pdfFile" class="form-control-file" id="pdfFile" accept=".pdf" required>
-                </div>
-                <div class="form-group">
-                    <label for="dueDate">Due Date:</label>
-                    <input type="date" name="dueDate" class="form-control" id="dueDate" required>
-                </div>
-                <button type="submit" name="submit" class="btn btn-block">Upload</button>
-            </form>
-        </div>
-    </div>
 
-    <!-- Display Uploaded Assignments -->
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title text-center">Uploaded Assignments</h4>
-        </div>
-        <div class="card-body">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Assignment Name</th>
-                        <th>Module</th>
-                        <th>File</th>
-                        <th>Handout Date</th>
-                        <th>Due Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $conn = connectDB();
-                    $assignments = getTeacherAssignments($conn, $teacherID);
+<!-- Assignments Table (Assignments uploaded by the logged-in teacher) -->
+<div class="card mt-5">
+    <div class="card-header">
+        <h4 class="card-title text-center">Your Uploaded Assignments</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Assignment Name</th>
+                    <th>Module</th>
+                    <th>HandOut Date</th>
+                    <th>Due Date</th>
+                    <th>Download</th>
+                    <th>View Submissions</th> <!-- New column for View Submissions -->
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $conn = connectDB();
+                $assignments = getTeacherAssignments($conn, $teacherID);
+                if (!empty($assignments)) {
                     foreach ($assignments as $assignment) {
                         echo "<tr>";
                         echo "<td>" . $assignment['AssignmentName'] . "</td>";
                         echo "<td>" . $assignment['ModuleName'] . "</td>";
-                        echo "<td><a href=\"" . $assignment['folder_path'] . $assignment['filename'] . "\">" . $assignment['filename'] . "</a></td>";
                         echo "<td>" . $assignment['HandOutDate'] . "</td>";
                         echo "<td>" . $assignment['DueDate'] . "</td>";
+                        echo "<td><a href='" . $assignment['folder_path'] . $assignment['filename'] . "' target='_blank' class='btn btn-info'>Download</a></td>";
+                        
+                        // New "View Submissions" button
+                        echo "<td><a href='view_submissions.php?assignmentID=" . $assignment['AssignmentID'] . "' class='btn btn-secondary'>View Submissions</a></td>";
                         echo "</tr>";
                     }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+                } else {
+                    echo "<tr><td colspan='6' class='text-center'>No assignments found.</td></tr>";
+                }
+                $conn->close();
+                ?>
+            </tbody>
+        </table>
     </div>
 </div>
+    </div>
 
-<script>
-    document.querySelector('.hamburger').addEventListener('click', function() {
-        document.querySelector('.sidebar').classList.toggle('active');
+    <script>
+    // Toggle Sidebar
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
     });
 </script>
+
 </body>
 </html>

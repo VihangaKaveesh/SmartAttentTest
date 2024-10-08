@@ -199,7 +199,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
         <a href="Assignments.php">Assignments</a><br><br><br><br><br>
         <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
         <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
-        <a href="../login/login.html">Logout</a>
+        <a href="../login/login.php">Logout</a>
     </div>
 </div>
 

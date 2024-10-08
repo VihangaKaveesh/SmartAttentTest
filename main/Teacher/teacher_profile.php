@@ -178,7 +178,7 @@ $full_name = htmlspecialchars($teacher['FirstName'] . ' ' . $teacher['LastName']
         <a href="Assignments-upload.php">Upload Assignments</a><br><br><br><br><br>
         <a href="sessionAnalysis.php">Session Analysis</a><br><br><br><br><br>
         <a href="lecture_material_upload.php">Lecture Materials</a><br><br><br><br><br>
-        <a href="../login/login.html">Logout</a>
+        <a href="../login/login.php">Logout</a>
     </div>
 </div>
 
