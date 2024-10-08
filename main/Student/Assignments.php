@@ -189,8 +189,8 @@ input[type="submit"] {
     margin-top: 10px;
 }
 
-        /* Hamburger Menu Icon */
-        .hamburger {
+       /* Hamburger Menu Icon */
+       .hamburger {
             font-size: 2rem;
             cursor: pointer;
             margin: 10px;
@@ -207,7 +207,7 @@ input[type="submit"] {
             left: -100%;
             height: 100%;
             width: 100vw;
-            background-color: #007bff;
+            background-color:#007bff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -242,7 +242,7 @@ input[type="submit"] {
             left: 0;
             width: 100%;
             height: 3px;
-            background: #007bff;
+            background: #fff;
             transform: scaleX(0);
             transform-origin: right;
             transition: transform 0.3s ease;
@@ -254,7 +254,7 @@ input[type="submit"] {
         }
 
         .nav-links a:hover {
-            background-color: #007bff;
+            background-color: #369ee4;
             border-radius: 5px;
             transform: translateY(-5px);
         }
