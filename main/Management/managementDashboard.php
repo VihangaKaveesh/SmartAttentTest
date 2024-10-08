@@ -225,7 +225,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'management') {
             <i class="fas fa-flask"></i>
             <p>Labs</p>
         </a>
-        <a href="../login/login.html" class="dashboard-item">
+        <a href="../login/login.php" class="dashboard-item">
             <i class="fas fa-sign-out-alt"></i>
             <p>Logout</p>
         </a>
