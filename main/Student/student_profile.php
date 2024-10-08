@@ -69,8 +69,11 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
+     body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             padding: 20px;
@@ -84,15 +87,103 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
             display: inline-block;
         }
         h1 {
-            color: #4CAF50;
+            color: #007bff;
         }
         p {
             font-size: 18px;
             margin: 10px 0;
         }
-    </style>
+
+                /* Hamburger Menu Icon */
+                .hamburger {
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            height: 100%;
+            width: 100vw;
+            background-color: #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: left 0.4s ease;
+            z-index: 1500;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            width: 100%;
+            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+            position: relative;
+        }
+
+        /* Modern Hover Animation */
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #007bff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-links a:hover {
+            background-color: #007bff;
+            border-radius: 5px;
+            transform: translateY(-5px);
+        }
+</style>
+
 </head>
 <body>
+    
+<!-- Hamburger Icon -->
+<div class="hamburger">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar">
+    <div class="nav-links">
+        <a href="student_profile.php">Profile</a><br><br><br><br><br>
+        <a href="qr-scanner.html">QR Scanner</a><br><br><br><br><br>
+        <a href="Assignments.php">Assignments</a><br><br><br><br><br>
+        <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
+        <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
+        <a href="../login/login.html">Logout</a>
+    </div>
+</div>
 
 <h1>Student Profile</h1>
 
@@ -103,6 +194,16 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
     <p><strong>Username:</strong> <?php echo htmlspecialchars($student['Username']); ?></p>
     <p><strong>Module:</strong> <?php echo htmlspecialchars($module_name); ?></p>
 </div>
+
+<script>
+    // Toggle Sidebar
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+</script>
 
 </body>
 </html>

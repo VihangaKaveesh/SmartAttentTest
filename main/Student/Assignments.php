@@ -80,9 +80,205 @@ $conn->close();
 <html>
 <head>
     <title>Download Assignments</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General page styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light gray background */
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Container styles */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styles */
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, 
+.table td {
+    padding: 12px;
+    text-align: center;
+}
+
+.table thead th {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Button styles */
+.btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.btn[disabled] {
+    background-color: #d6d8db;
+    color: #6c757d;
+    border: none;
+}
+
+/* Form styles */
+form {
+    display: inline-block;
+    margin: 0;
+}
+
+input[type="file"] {
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    margin-top: 10px;
+}
+
+        /* Hamburger Menu Icon */
+        .hamburger {
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            height: 100%;
+            width: 100vw;
+            background-color: #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: left 0.4s ease;
+            z-index: 1500;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            width: 100%;
+            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+            position: relative;
+        }
+
+        /* Modern Hover Animation */
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #007bff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-links a:hover {
+            background-color: #007bff;
+            border-radius: 5px;
+            transform: translateY(-5px);
+        }
+</style>
 </head>
 <body>
+    
+<!-- Hamburger Icon -->
+<div class="hamburger">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar">
+    <div class="nav-links">
+        <a href="student_profile.php">Profile</a><br><br><br><br><br>
+        <a href="qr-scanner.html">QR Scanner</a><br><br><br><br><br>
+        <a href="Assignments.php">Assignments</a><br><br><br><br><br>
+        <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
+        <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
+        <a href="../login/login.html">Logout</a>
+    </div>
+</div>
+
     <div class="container">
         <h1 class="mt-4">Download Assignments</h1>
         <div class="table-responsive">
@@ -159,5 +355,16 @@ $conn->close();
             </table>
         </div>
     </div>
+
+    <script>
+    // Toggle Sidebar
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+</script>
+
 </body>
 </html>
