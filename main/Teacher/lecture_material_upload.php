@@ -115,7 +115,97 @@ if (isset($_POST['submit'])) {
     <!--Bootstrap CSS-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
-         /* Hamburger Menu Icon */
+         body {
+            /* font-family: 'Orbitron', sans-serif; */
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Card styling */
+        .card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control, .form-control-file, select {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table td a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        table td a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sidebar Styling */
         .hamburger {
             font-size: 2rem;
             cursor: pointer;
@@ -126,7 +216,6 @@ if (isset($_POST['submit'])) {
             z-index: 2000;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -153,14 +242,12 @@ if (isset($_POST['submit'])) {
             text-decoration: none;
             font-weight: 500;
             font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
             text-align: center;
             width: 100%;
             transition: background 0.3s, padding 0.3s, transform 0.3s ease;
             position: relative;
         }
 
-        /* Modern Hover Animation */
         .nav-links a::before {
             content: '';
             position: absolute;
@@ -235,7 +322,7 @@ if (isset($_POST['submit'])) {
                         <label for="pdfFile">Select PDF File:</label>
                         <input type="file" name="pdfFile" class="form-control-file" id="pdfFile" required>
                     </div>
-                    <button type="submit" name="submit" class="btn btn-primary btn-block">Upload File</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block"  >Upload File</button>
                     <button type="reset" class="btn btn-warning btn-block">Reset</button>
                 </form>
             </div>
@@ -274,9 +361,9 @@ if (isset($_POST['submit'])) {
     </div>
 
     <!--Bootstrap JS-->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
 
     <script>
     document.querySelector('.hamburger').addEventListener('click', function() {

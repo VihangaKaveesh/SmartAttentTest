@@ -52,7 +52,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
             left: -100%;
             height: 100%;
             width: 100vw;
-            background-color: #4CAF50;
+            background-color:#007bff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -99,7 +99,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
         }
 
         .nav-links a:hover {
-            background-color: #388E3C;
+            background-color: #369ee4;
             border-radius: 5px;
             transform: translateY(-5px);
         }
@@ -145,7 +145,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
 
         .dashboard-item i {
             font-size: 3rem;
-            color: #4CAF50;
+            color: #007bff;
         }
 
         .dashboard-item p {

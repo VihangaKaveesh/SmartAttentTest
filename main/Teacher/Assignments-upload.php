@@ -120,15 +120,95 @@ if (isset($_POST['submit'])) {
     <!-- Google Fonts for the Orbitron font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7fa;
-            color: #333;
+             body {
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
+            /* font-family: 'Orbitron', sans-serif; */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Hamburger Menu Icon */
+        /* Center the container */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control, .form-control-file, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table td a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        table td a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sidebar Styling */
         .hamburger {
             font-size: 2rem;
             cursor: pointer;
@@ -139,7 +219,6 @@ if (isset($_POST['submit'])) {
             z-index: 2000;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -166,14 +245,12 @@ if (isset($_POST['submit'])) {
             text-decoration: none;
             font-weight: 500;
             font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
             text-align: center;
             width: 100%;
             transition: background 0.3s, padding 0.3s, transform 0.3s ease;
             position: relative;
         }
 
-        /* Modern Hover Animation */
         .nav-links a::before {
             content: '';
             position: absolute;
@@ -197,138 +274,6 @@ if (isset($_POST['submit'])) {
             border-radius: 5px;
             transform: translateY(-5px);
         }
-
-        /* Main Content */
-        .container {
-            margin-top: 80px;
-            max-width: 1400px;
-            padding: 20px;
-            margin-left: auto;
-            margin-right: auto;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .card-header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            text-align: center;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .form-control {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .form-group{
-            padding: 10px;
-        }
-
-        .btn:hover {
-            background-color: #388E3C;
-        }
-        /* General table styling for visibility and unified look */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 16px;
-    text-align: left;
-    background-color: #f8f9fa; /* Light background for readability */
-}
-
-/* Table header styling */
-table thead th {
-    background-color: oldlace; /* Unified color theme */
-    color: #4CAF50; /* Contrast for better visibility */
-    padding: 12px 15px;
-    text-transform: uppercase;
-    font-weight: bold;
-    /*border-bottom: 2px solid #3c3c7a;  Solid border for separation */
-}
-
-/* Table row styling */
-table tbody tr {
-    border-bottom: 1px solid #ddd; /* Light row separation */
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2; /* Alternate row color for better readability */
-}
-
-table tbody tr:hover {
-    background-color: #ddd; /* Row highlight on hover for interactivity */
-}
-
-/* Table cell styling */
-table tbody td {
-    padding: 12px 15px;
-    color: #333; /* Unified text color */
-}
-
-/* Table for a smaller screen */
-@media screen and (max-width: 768px) {
-    table {
-        font-size: 14px; /* Adjust font size for smaller screens */
-    }
-
-    table thead {
-        display: none; /* Hide headers on small screens for simplified view */
-    }
-
-    table, table tbody, table tr, table td {
-        display: block;
-        width: 100%;
-    }
-
-    table tr {
-        margin-bottom: 15px;
-    }
-
-    table td {
-        text-align: right;
-        padding-left: 50%;
-        position: relative;
-    }
-
-    table td::before {
-        content: attr(data-label); /* Add data labels for mobile view */
-        position: absolute;
-        left: 0;
-        width: 50%;
-        padding-left: 15px;
-        font-weight: bold;
-        text-align: left;
-        color: #4b4b8a; /* Color to match the unified theme */
-    }
-}
-
     </style>
 </head>
 <body>

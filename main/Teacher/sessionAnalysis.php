@@ -384,6 +384,25 @@ canvas {
             border-radius: 5px;
             transform: translateY(-5px);
         }
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control, .form-control-file, select {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
 
     </style>
 </head>
@@ -409,6 +428,7 @@ canvas {
 
         <!-- Dropdown to select a session -->
         <form method="GET">
+        <div class="form-group">
             <label for="session_id">Select a Session:</label>
             <select name="session_id" id="session_id" onchange="this.form.submit()">
                 <option value="">-- Select Session --</option>
@@ -419,6 +439,7 @@ canvas {
                 <?php endforeach; ?>
             </select>
         </form>
+        </div>
 
         <?php if ($session_id > 0): ?>
             <h2>Session Details</h2>

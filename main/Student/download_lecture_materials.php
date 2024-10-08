@@ -147,8 +147,8 @@ table tbody tr:hover {
         font-size: 0.8rem;
     }
 }
-       /* Hamburger Menu Icon */
-       .hamburger {
+     /* Hamburger Menu Icon */
+     .hamburger {
             font-size: 2rem;
             cursor: pointer;
             margin: 10px;
@@ -165,7 +165,7 @@ table tbody tr:hover {
             left: -100%;
             height: 100%;
             width: 100vw;
-            background-color: #007bff;
+            background-color:#007bff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -200,7 +200,7 @@ table tbody tr:hover {
             left: 0;
             width: 100%;
             height: 3px;
-            background: #007bff;
+            background: #fff;
             transform: scaleX(0);
             transform-origin: right;
             transition: transform 0.3s ease;
@@ -212,7 +212,7 @@ table tbody tr:hover {
         }
 
         .nav-links a:hover {
-            background-color: #007bff;
+            background-color: #369ee4;
             border-radius: 5px;
             transform: translateY(-5px);
         }

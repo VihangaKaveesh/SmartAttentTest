@@ -86,6 +86,8 @@ $attendance_percentage = ($total_classes > 0) ? ($present_count / $total_classes
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Attendance Analysis</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
         <style>
            body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -266,9 +268,94 @@ $attendance_percentage = ($total_classes > 0) ? ($present_count / $total_classes
                 font-size: 0.85em;
             }
         }
+         /* Hamburger Menu Icon */
+         .hamburger {
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            height: 100%;
+            width: 100vw;
+            background-color:#a03aba;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: left 0.4s ease;
+            z-index: 1500;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            width: 100%;
+            transition: background 0.3s, padding 0.3s, transform 0.3s ease;
+            position: relative;
+        }
+
+        /* Modern Hover Animation */
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-links a:hover {
+            background-color: #d448f7;
+            border-radius: 5px;
+            transform: translateY(-5px);
+        }
         </style>
     </head>
     <body>
+            <!-- Hamburger Icon -->
+<div class="hamburger">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="sidebar">
+    <div class="nav-links">
+        <a href="manageStudents.php">Students</a><br><br><br><br><br>
+        <a href="addModules.php">Modules</a><br><br><br><br><br>
+        <a href="manageTeachers.php">Teachers</a><br><br><br><br><br>
+        <a href="notice.php">Notices</a><br><br><br><br><br>
+        <a href="addLabs.php">Labs</a><br><br><br><br><br>
+        <a href="../login/login.html">Logout</a>
+    </div>
+</div>
         <div class="container">
             <h1>Attendance Analysis for <?php echo $student_name; ?></h1>
             <p>Total Classes Conducted: <?php echo $total_classes; ?></p>
@@ -322,5 +409,14 @@ $attendance_percentage = ($total_classes > 0) ? ($present_count / $total_classes
                 </tbody>
             </table>
         </div>
+        <script>
+    // Toggle Sidebar
+    const hamburger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+</script>
     </body>
     </html>

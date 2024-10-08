@@ -94,8 +94,8 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
             margin: 10px 0;
         }
 
-                /* Hamburger Menu Icon */
-                .hamburger {
+               /* Hamburger Menu Icon */
+        .hamburger {
             font-size: 2rem;
             cursor: pointer;
             margin: 10px;
@@ -112,7 +112,7 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
             left: -100%;
             height: 100%;
             width: 100vw;
-            background-color: #007bff;
+            background-color:#007bff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -147,7 +147,7 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
             left: 0;
             width: 100%;
             height: 3px;
-            background: #007bff;
+            background: #fff;
             transform: scaleX(0);
             transform-origin: right;
             transition: transform 0.3s ease;
@@ -159,7 +159,7 @@ $full_name = htmlspecialchars($student['FirstName'] . ' ' . $student['LastName']
         }
 
         .nav-links a:hover {
-            background-color: #007bff;
+            background-color: #369ee4;
             border-radius: 5px;
             transform: translateY(-5px);
         }
