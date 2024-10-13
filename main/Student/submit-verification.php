@@ -54,6 +54,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Your Attendance</title>
+    <style>
+        /* Reset some default styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light grey background */
+}
+
+/* Center the form on the page */
+form {
+    max-width: 400px; /* Max width for the form */
+    margin: 100px auto; /* Center form with auto margins */
+    padding: 20px;
+    background: white; /* White background for form */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Styling the form labels */
+label {
+    display: block; /* Labels on new lines */
+    margin-bottom: 8px; /* Space below labels */
+    font-weight: bold; /* Bold labels */
+}
+
+/* Styling input fields */
+input[type="text"] {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside input */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 4px; /* Rounded corners */
+    margin-bottom: 20px; /* Space below inputs */
+}
+
+/* Styling the submit button */
+button {
+    width: 100%; /* Full width button */
+    padding: 10px; /* Padding inside button */
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer on hover */
+    font-size: 16px; /* Larger font */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Error messages styling */
+.error-message {
+    color: red; /* Red color for errors */
+    margin-top: 10px; /* Space above error messages */
+}
+</style>
 </head>
 <body>
     <form method="POST">
