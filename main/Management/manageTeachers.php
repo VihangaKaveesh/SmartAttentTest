@@ -142,107 +142,107 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-     
-     body {
+        body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f3f3f3;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
 
+        /* General Styling */
         h1 {
-            color: #26648E;
             text-align: center;
-            margin-top: 20px;
-        }
-
-        h2 {
-            color: #6A1B9A;
-            text-align: center;
+            color: #5a4dcf;
+            margin: 30px 0;
         }
 
         form {
-            width: 60%;
+            max-width: 500px;
             margin: 20px auto;
             padding: 20px;
-            background-color: white;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        form label {
-            font-weight: bold;
+        label {
             display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
             margin-bottom: 10px;
-            color: #26648E;
-        }
-
-        form input[type="text"], form input[type="password"], form input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 2px solid #d1d1d1;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            transition: border-color 0.3s ease;
         }
 
-        form input[type="text"]:focus, form input[type="password"]:focus, form input[type="email"]:focus {
-            border-color: #6A1B9A;
-        }
-
-        form input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #6A1B9A;
+        input[type="submit"] {
+            background-color: #5a4dcf;
             color: white;
             font-weight: bold;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease;
         }
 
-        form input[type="submit"]:hover {
-            background-color: #8E24AA;
+        input[type="submit"]:hover {
+            background-color: #4a3db0;
         }
 
+        /* Table Styling */
         table {
-            width: 90%;
-            margin: 30px auto;
+            width: 80%;
+            margin: 20px auto;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        table th, table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
         }
 
-        table th {
-            background-color: #26648E;
+        th {
+            background-color: #5a4dcf;
             color: white;
-            font-weight: bold;
         }
 
-        table tr:nth-child(even) {
-            background-color: #f3f3f3;
+        td {
+            color: #333;
         }
 
-        table tr:hover {
-            background-color: #e0e0e0;
-        }
-
-        table a {
-            color: #6A1B9A;
+        td a {
             text-decoration: none;
+            color: #5a4dcf;
             font-weight: bold;
         }
 
-        table a:hover {
+        td a:hover {
             text-decoration: underline;
+        }
+
+        .message {
+            text-align: center;
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 80%;
+        }
+
+        .error {
+            text-align: center;
+            background-color: #f2dede;
+            color: #a94442;
+            padding: 10px;
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 80%;
         }
 
          /* Hamburger Menu Icon */
@@ -376,7 +376,7 @@ if (!empty($message)) {
 </form>
 
 <!-- Table to display the list of teachers -->
-<h2 style="color: #26648E;">Teacher List</h2>
+<center><h2 style="color: #26648E;">Teacher List</h2></center>
 <table>
     <tr>
         <th>Username</th>

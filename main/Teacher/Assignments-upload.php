@@ -10,6 +10,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
 // Get teacher's ID from session (assuming it's stored in the session)
 $teacherID = $_SESSION['teacher_id']; // Make sure this session variable is set during login
 
+// Initialize an empty variable to store error messages
+$errorMessage = "";
+
 // Function to connect to the database
 function connectDB() {
     $servername = "localhost";
@@ -79,7 +82,7 @@ if (isset($_POST['submit'])) {
 
     // Check if file is a PDF and less than 10MB
     if ($fileType != "pdf" || $_FILES["pdfFile"]["size"] > 10000000) {
-        echo "Error: Only PDF files less than 10MB are allowed to upload.";
+        $errorMessage = "Error: Only PDF files less than 10MB are allowed to upload.";
     } else {
         if (move_uploaded_file($_FILES["pdfFile"]["tmp_name"], $targetFile)) {
             $filename = $_FILES["pdfFile"]["name"];
@@ -91,21 +94,25 @@ if (isset($_POST['submit'])) {
             $assignmentName = $conn->real_escape_string($_POST['assignmentName']);
             $dueDate = $conn->real_escape_string($_POST['dueDate']);
 
-            // Insert query including TeacherID
-            $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate, TeacherID)
-                    VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate', '$teacherID')";
-
-            if ($conn->query($sql) === TRUE) {
-                echo "File uploaded and assignment created successfully.";
+            // Check if Due Date is before HandOut Date
+            if (strtotime($dueDate) < strtotime($handOutDate)) {
+                $errorMessage = "Error: Due date cannot be before the handout date.";
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
-            }
+                // Insert query including TeacherID
+                $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate, TeacherID)
+                        VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate', '$teacherID')";
 
-            $conn->close();
+                if ($conn->query($sql) === TRUE) {
+                    $successMessage = "File uploaded and assignment created successfully.";
+                } else {
+                    $errorMessage = "Error: " . $sql . "<br>" . $conn->error;
+                }
+            }
         } else {
-            echo "Error uploading file.";
+            $errorMessage = "Error uploading file.";
         }
     }
+    $conn->close();
 }
 ?>
 
@@ -119,8 +126,91 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-                /* Hamburger Menu Icon */
-                .hamburger {
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Card styling */
+        .card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control, .form-control-file, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        h4 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Sidebar Styling */
+        .hamburger {
             font-size: 2rem;
             cursor: pointer;
             margin: 10px;
@@ -130,7 +220,6 @@ if (isset($_POST['submit'])) {
             z-index: 2000;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -157,14 +246,12 @@ if (isset($_POST['submit'])) {
             text-decoration: none;
             font-weight: 500;
             font-size: 1.5rem;
-            font-family: 'Poppins', sans-serif;
             text-align: center;
             width: 100%;
             transition: background 0.3s, padding 0.3s, transform 0.3s ease;
             position: relative;
         }
 
-        /* Modern Hover Animation */
         .nav-links a::before {
             content: '';
             position: absolute;
@@ -183,97 +270,35 @@ if (isset($_POST['submit'])) {
             transform-origin: left;
         }
 
-        .nav-links a:hover {
-            background-color: #388E3C;
-            border-radius: 5px;
-            transform: translateY(-5px);
-        }
-
-        /* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa; /* Light background color */
+/* Center message containers */
+.message-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin: 20px 0; /* Add margin for spacing */
 }
 
-.container {
-    max-width: 800px; /* Maximum width of the container */
-    margin: 0 auto; /* Center the container */
-    padding: 20px; /* Add padding */
+/* Error and success message styling */
+.error-message, .success-message {
+    padding: 10px;
+    border-radius: 5px;
+    width: 50%; /* Adjust width as necessary */
+    text-align: center; /* Center text inside the message box */
 }
 
-/* Card Styles */
-.card {
-    border: 1px solid #dee2e6; /* Border color */
-    border-radius: 0.25rem; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    margin-bottom: 30px; /* Spacing between cards */
+.error-message {
+    color: red;
+    border: 1px solid red;
+    background-color: #ffe6e6;
 }
 
-.card-header {
-    background-color: #4CAF50; /* Bootstrap primary color */
-    color: white; /* White text */
-    padding: 15px; /* Padding in header */
-    text-align: center; /* Center align text */
+.success-message {
+    color: green;
+    border: 1px solid green;
+    background-color: #e6ffe6;
 }
 
-.card-title {
-    margin: 0; /* Remove margin */
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 15px; /* Space between form groups */
-}
-
-label {
-    font-weight: bold; /* Bold labels */
-}
-
-/* Button Styles */
-.btn {
-    margin-top: 10px; /* Space above buttons */
-}
-
-.btn-block {
-    width: 100%; /* Full width buttons */
-}
-
-/* Table Styles */
-.table {
-    width: 100%; /* Full width table */
-    border-collapse: collapse; /* Collapse borders */
-}
-
-.table th, .table td {
-    padding: 12px; /* Padding in table cells */
-    text-align: left; /* Align text to the left */
-}
-
-.table th {
-    background-color: #4CAF50; /* Header background color */
-    color: white; /* Header text color */
-}
-
-.table-bordered th, .table-bordered td {
-    border: 1px solid #dee2e6; /* Border color */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f2f2f2; /* Light grey background for odd rows */
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px; /* Less padding on smaller screens */
-    }
-    
-    .btn {
-        margin-top: 5px; /* Less space above buttons */
-    }
-}
-
-</style>
+    </style>
 </head>
 <body>
     
@@ -285,15 +310,30 @@ label {
 <!-- Sidebar Menu -->
 <div class="sidebar">
     <div class="nav-links">
-        <a href="student_profile.php">Profile</a><br><br><br><br><br>
-        <a href="qr-scanner.html">QR Scanner</a><br><br><br><br><br>
-        <a href="Assignments.php">Assignments</a><br><br><br><br><br>
-        <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
-        <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
+        <a href="teacher_profile.php">Profile</a><br><br><br><br><br>
+        <a href="Teacher-qr-generator.php">QR Code</a><br><br><br><br><br>
+        <a href="Assignments-upload.php">Upload Assignments</a><br><br><br><br><br>
+        <a href="sessionAnalysis.php">Session Analysis</a><br><br><br><br><br>
+        <a href="lecture_material_upload.php">Lecture Materials</a><br><br><br><br><br>
         <a href="../login/login.php">Logout</a>
     </div>
 </div>
 
+<!-- Display error message if it exists -->
+<?php if (!empty($errorMessage)): ?>
+    <div class="message-container">
+        <div class="error-message"><?= $errorMessage ?></div>
+    </div>
+<?php endif; ?>
+
+<!-- Display success message if it exists -->
+<?php if (!empty($successMessage)): ?>
+    <div class="message-container">
+        <div class="success-message"><?= $successMessage ?></div>
+    </div>
+<?php endif; ?>
+
+    
     <div class="container">
         <!-- Assignment Upload Form -->
         <div class="card mt-5">

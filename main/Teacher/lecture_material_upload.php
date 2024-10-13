@@ -60,6 +60,10 @@ function getTeacherMaterials($conn, $teacherID) {
     return $materials;
 }
 
+// Variable to store error message
+$errorMessage = '';
+$successMessage = ''; // Add a success message variable
+
 // Check if file is uploaded
 if (isset($_POST['submit'])) {
     $conn = connectDB(); // Call the connectDB() function to establish the connection
@@ -70,7 +74,7 @@ if (isset($_POST['submit'])) {
 
     // Check if file is a PDF and less than 10MB
     if ($fileType != "pdf" || $_FILES["pdfFile"]["size"] > 10000000) {
-        echo "Error: Only PDF files less than 10MB are allowed to upload.";
+        $errorMessage = "Error: Only PDF files less than 10MB are allowed to upload.";
     } else {
         // Move uploaded file to uploads folder
         if (move_uploaded_file($_FILES["pdfFile"]["tmp_name"], $targetFile)) {
@@ -89,14 +93,15 @@ if (isset($_POST['submit'])) {
                     VALUES ('$moduleID', '$materialName', '$filename', '$folder_path', '$uploadDate', '$teacherID')";
 
             if ($conn->query($sql) === TRUE) {
-                echo "File uploaded and material created successfully.";
+                $successMessage = "File uploaded and material created successfully."; // Set success message
+                echo "<script>window.onload = function() { document.getElementById('uploadForm').reset(); }</script>"; // Reset the form after upload
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+                $errorMessage = "Error: " . $sql . "<br>" . $conn->error;
             }
 
             $conn->close(); // Close the connection after the query
         } else {
-            echo "Error uploading file.";
+            $errorMessage = "Error uploading file.";
         }
     }
 }
@@ -112,11 +117,12 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts for the Orbitron font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <!--Bootstrap CSS-->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-         body {
-            /* font-family: 'Orbitron', sans-serif; */
+        body {
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
@@ -205,7 +211,18 @@ if (isset($_POST['submit'])) {
             text-decoration: underline;
         }
 
-        /* Sidebar Styling */
+                /* Sidebar Styling */
+                .hamburger {
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+        }
+
+        /* Hamburger Menu Icon */
         .hamburger {
             font-size: 2rem;
             cursor: pointer;
@@ -216,6 +233,7 @@ if (isset($_POST['submit'])) {
             z-index: 2000;
         }
 
+        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -242,12 +260,14 @@ if (isset($_POST['submit'])) {
             text-decoration: none;
             font-weight: 500;
             font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
             text-align: center;
             width: 100%;
             transition: background 0.3s, padding 0.3s, transform 0.3s ease;
             position: relative;
         }
 
+        /* Modern Hover Animation */
         .nav-links a::before {
             content: '';
             position: absolute;
@@ -274,7 +294,8 @@ if (isset($_POST['submit'])) {
     </style>
 </head>
 <body>
-  <!-- Hamburger Icon -->
+
+<!-- Hamburger Icon -->
 <div class="hamburger">
     <i class="fas fa-bars"></i>
 </div>
@@ -291,84 +312,123 @@ if (isset($_POST['submit'])) {
     </div>
 </div>
 
-    <div class="container">
-        <h4 class="text-center mt-5">Upload PDF File for Lecture Material</h4>
+<div class="container">
+    <h4 class="text-center mt-5">Upload Lecture Material</h4>
 
-        <!-- Upload Form -->
-        <div class="card my-3">
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="module">Select Module:</label>
-                        <select name="module" class="form-control" id="module" required>
-                            <option value="">Select a module</option>
-                            <?php
-                            $conn = connectDB(); // Call the connectDB() function
-                            $modules = getModules($conn); // Get the list of modules
-                            foreach ($modules as $module) {
-                                // Retain the selected option after form submission
-                                $selected = (isset($_POST['module']) && $_POST['module'] == $module['ModuleID']) ? "selected" : "";
-                                echo "<option value='" . $module['ModuleID'] . "' $selected>" . $module['ModuleName'] . "</option>";
-                            }
-                            $conn->close(); // Close the connection
-                            ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="materialName">Material Name:</label>
-                        <input type="text" name="materialName" class="form-control" id="materialName" value="<?php echo isset($_POST['materialName']) ? htmlspecialchars($_POST['materialName']) : ''; ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="pdfFile">Select PDF File:</label>
-                        <input type="file" name="pdfFile" class="form-control-file" id="pdfFile" required>
-                    </div>
-                    <button type="submit" name="submit" class="btn btn-primary btn-block"  >Upload File</button>
-                    <button type="reset" class="btn btn-warning btn-block">Reset</button>
-                </form>
-            </div>
+    <!-- Display error message if exists -->
+    <?php if (!empty($errorMessage)): ?>
+        <div class="alert alert-danger text-center">
+            <?php echo htmlspecialchars($errorMessage); ?>
         </div>
+    <?php endif; ?>
 
-        <!-- View Uploaded Materials -->
-        <h4 class="text-center mt-5">Your Uploaded Lecture Materials</h4>
-        <table class="table table-striped table-bordered">
+    <!-- Display success message if exists -->
+    <?php if (!empty($successMessage)): ?>
+        <div class="alert alert-success text-center">
+            <?php echo htmlspecialchars($successMessage); ?>
+        </div>
+    <?php endif; ?>
+
+<!-- Upload Form -->
+<div class="card my-3">
+    <div class="card-body">
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="course">Select Module:</label>
+                <select id="module" name="module" class="form-control">
+                    <?php
+                    $conn = connectDB(); // Call the connectDB() function
+
+                    // Check if the session variable for TeacherID is set correctly
+                    if (isset($_SESSION['teacher_id'])) {
+                        $teacher_id = $_SESSION['teacher_id']; // Use the correct session variable
+                    } else {
+                        echo "<option value=''>No Teacher ID found</option>"; // Add this line to handle missing session
+                        exit(); // Exit if no TeacherID is found
+                    }
+
+                    // Fetch modules specific to the logged-in teacher
+                    $query = "SELECT ModuleID, ModuleName FROM modules WHERE TeacherID = ?";
+                    $stmt = $conn->prepare($query);
+                    if ($stmt) {
+                        $stmt->bind_param("i", $teacher_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        // Populate the dropdown with module names for the specific teacher
+                        if ($result->num_rows > 0) {
+                            while ($module = $result->fetch_assoc()) {
+                                $selected = (isset($currentModule) && $currentModule == $module['ModuleID']) ? "selected" : "";
+                                echo "<option value='" . htmlspecialchars($module['ModuleID']) . "' $selected>" . htmlspecialchars($module['ModuleName']) . "</option>";
+                            }
+                        } else {
+                            echo "<option value=''>No modules available</option>"; // Message when no modules are found
+                        }
+                    } else {
+                        echo "<option value=''>Error fetching modules</option>"; // Message if the statement failed
+                    }
+
+                    $stmt->close();
+                    $conn->close(); // Close the connection
+                    ?>
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="materialName">Material Name:</label>
+                <input type="text" name="materialName" class="form-control" id="materialName" value="<?php echo isset($_POST['materialName']) ? htmlspecialchars($_POST['materialName']) : ''; ?>" required>
+            </div>
+
+            <div class="form-group">
+                    <label for="pdfFile">Select PDF File:</label>
+                    <input type="file" name="pdfFile" class="form-control-file" id="pdfFile" required>
+                </div>
+                <button type="submit" name="submit">Upload</button>
+            </form>
+        </div>
+    </div>
+
+
+    <h4 class="text-center mt-5">Uploaded Materials</h4>
+        <table>
             <thead>
                 <tr>
                     <th>Material Name</th>
-                    <th>Module</th>
-                    <th>Upload Date</th>
-                    <th>Action</th>
+                    <th>Module Name</th>
+                    <th>Uploaded Date</th>
+                    <th>Download</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
+                // Fetch materials uploaded by the teacher
+                $teacherID = $_SESSION['teacher_id'];
                 $conn = connectDB();
-                $teacherID = $_SESSION['teacher_id']; // Fetch the teacher ID from session
-                $materials = getTeacherMaterials($conn, $teacherID); // Fetch materials uploaded by this teacher
-
+                $materials = getTeacherMaterials($conn, $teacherID);
                 foreach ($materials as $material) {
-                    echo "<tr>";
-                    echo "<td>" . htmlspecialchars($material['MaterialName']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['ModuleName']) . "</td>"; // Display ModuleName instead of ModuleID
-                    echo "<td>" . htmlspecialchars($material['UploadDate']) . "</td>";
-                    echo "<td><a href='" . htmlspecialchars($material['folder_path'] . $material['filename']) . "' download>Download</a></td>";
-                    echo "</tr>";
+                    echo "<tr>
+                            <td>" . htmlspecialchars($material['MaterialName']) . "</td>
+                            <td>" . htmlspecialchars($material['ModuleName']) . "</td>
+                            <td>" . htmlspecialchars($material['UploadDate']) . "</td>
+                            <td><a href='" . htmlspecialchars($material['folder_path']) . htmlspecialchars($material['filename']) . "' target='_blank'>Download</a></td>
+                          </tr>";
                 }
-
                 $conn->close();
                 ?>
             </tbody>
         </table>
     </div>
 
-    <!--Bootstrap JS-->
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
-
     <script>
-    document.querySelector('.hamburger').addEventListener('click', function() {
-        document.querySelector('.sidebar').classList.toggle('active');
-    });
-</script>
+        // Toggle Sidebar
+        const hamburger = document.querySelector('.hamburger');
+        const sidebar = document.querySelector('.sidebar');
+
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    </script>
+
 </body>
 </html>
