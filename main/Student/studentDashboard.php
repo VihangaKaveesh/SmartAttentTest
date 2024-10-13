@@ -199,6 +199,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
         <a href="Assignments.php">Assignments</a><br><br><br><br><br>
         <a href="download_lecture_materials.php">Lecture Materials</a><br><br><br><br><br>
         <a href="notice_board.php">Notice Board</a><br><br><br><br><br>
+        <a href="studentAnalysis.php">Attendance Analysis</a><br><br><br><br><br>
         <a href="../login/login.php">Logout</a>
     </div>
 </div>
@@ -225,6 +226,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
         <a href="notice_board.php" class="dashboard-item" title="View announcements">
             <i class="fas fa-bullhorn"></i>
             <p>Notice Board</p>
+        </a>
+        <a href="studentAnalysis.php" class="dashboard-item" title="Session Analysis">
+            <i class="fas fa-chart-line"></i>
+            <p>Attendance Analysis</p>
         </a>
         <a href="../login/login.php" class="dashboard-item" title="Log out of your account">
             <i class="fas fa-sign-out-alt"></i>

@@ -27,10 +27,10 @@ function connectDB() {
 function getAverageMarks($module_id) {
     $conn = connectDB();
     $query = "
-        SELECT assignments.AssignmentID, assignments.AssignmentName, AVG(assignmentmarks.MarksObtained) as averageMarks 
+        SELECT assignments.AssignmentID, assignments.AssignmentName, AVG(submissions.marks) AS averageMarks 
         FROM assignments 
-        LEFT JOIN assignmentmarks ON assignments.AssignmentID = assignmentmarks.AssignmentID 
-        WHERE assignments.ModuleID = ?
+        LEFT JOIN submissions ON assignments.AssignmentID = submissions.AssignmentID 
+        WHERE assignments.ModuleID = ? 
         GROUP BY assignments.AssignmentID";
     
     $stmt = $conn->prepare($query);
@@ -51,26 +51,32 @@ function getAverageMarks($module_id) {
 // Fetch specific assignment details and student marks
 function getAssignmentDetails($assignment_id) {
     $conn = connectDB();
-    $query = "
-        SELECT students.StudentID, CONCAT(students.FirstName, ' ', students.LastName) AS StudentName, assignmentmarks.MarksObtained
-        FROM assignmentmarks
-        LEFT JOIN students ON assignmentmarks.StudentID = students.StudentID
-        WHERE assignmentmarks.AssignmentID = ?";
     
-    $stmt = $conn->prepare($query);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    $sql = "SELECT s.StudentID, CONCAT(s.FirstName, ' ', s.LastName) AS StudentName, 
+                   sub.Marks AS MarksObtained
+            FROM Students s
+            LEFT JOIN Submissions sub ON s.StudentID = sub.StudentID AND sub.AssignmentID = ?";
+    
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $assignment_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $data = [];
 
+    $details = [];
     while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
+        $details[] = $row;
     }
 
     $stmt->close();
     $conn->close();
-    return $data;
+
+    return $details;
 }
+
 
 // Fetch module name by module ID
 function getModuleName($module_id) {
@@ -86,7 +92,6 @@ function getModuleName($module_id) {
     $conn->close();
     return $moduleName;
 }
-
 
 // Fetch all assignments under a module for the dropdown
 function getAssignments($module_id) {
@@ -113,7 +118,7 @@ function getSubmissionStats($assignment_id, $module_id) {
     $query = "
         SELECT 
             (SELECT COUNT(*) FROM students WHERE ModuleID = ?) AS totalStudents,
-            (SELECT COUNT(*) FROM assignmentmarks WHERE AssignmentID = ?) AS submittedStudents";
+            (SELECT COUNT(*) FROM submissions WHERE AssignmentID = ?) AS submittedStudents";
     
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ii", $module_id, $assignment_id);
@@ -142,6 +147,7 @@ if ($assignment_id) {
     $assignment_details = getAssignmentDetails($assignment_id);
     $submission_stats = getSubmissionStats($assignment_id, $module_id);
 }
+
 // Get the selected module name
 $module_name = $module_id ? getModuleName($module_id) : '';
 ?>

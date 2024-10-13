@@ -126,7 +126,11 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+<<<<<<< HEAD
         /* Global Styles */
+=======
+                /* Global Styles */
+>>>>>>> fcde0791ec127f0f790c736b3e565ab943447e64
         body {
             margin: 0;
             padding: 0;
@@ -270,6 +274,7 @@ if (isset($_POST['submit'])) {
             transform-origin: left;
         }
 
+<<<<<<< HEAD
 /* Center message containers */
 .message-container {
     display: flex;
@@ -299,6 +304,21 @@ if (isset($_POST['submit'])) {
 }
 
     </style>
+=======
+        .nav-links a:hover {
+            background-color: #388E3C;
+            border-radius: 5px;
+            transform: translateY(-5px);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+        }
+</style>
+>>>>>>> fcde0791ec127f0f790c736b3e565ab943447e64
 </head>
 <body>
     
