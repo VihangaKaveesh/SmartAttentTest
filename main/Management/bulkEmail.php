@@ -155,6 +155,80 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 5px;
             transform: translateY(-5px);
         }
+
+        /* Basic styling for the form */
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Style for the form heading */
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Styling for labels */
+label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+/* Styling for input fields and textarea */
+input[type="text"], 
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Styling for the submit button */
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #a03aba;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    form {
+        padding: 15px;
+    }
+
+    input[type="text"],
+    textarea {
+        font-size: 14px;
+    }
+
+    button[type="submit"] {
+        font-size: 16px;
+    }
+}
     </style>
 </head>
 <body>

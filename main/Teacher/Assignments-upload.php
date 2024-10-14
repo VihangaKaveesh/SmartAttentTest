@@ -10,6 +10,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher') {
 // Get teacher's ID from session (assuming it's stored in the session)
 $teacherID = $_SESSION['teacher_id']; // Make sure this session variable is set during login
 
+// Initialize an empty variable to store error messages
+$errorMessage = "";
+
 // Function to connect to the database
 function connectDB() {
     $servername = "localhost";
@@ -79,7 +82,7 @@ if (isset($_POST['submit'])) {
 
     // Check if file is a PDF and less than 10MB
     if ($fileType != "pdf" || $_FILES["pdfFile"]["size"] > 10000000) {
-        echo "Error: Only PDF files less than 10MB are allowed to upload.";
+        $errorMessage = "Error: Only PDF files less than 10MB are allowed to upload.";
     } else {
         if (move_uploaded_file($_FILES["pdfFile"]["tmp_name"], $targetFile)) {
             $filename = $_FILES["pdfFile"]["name"];
@@ -91,21 +94,25 @@ if (isset($_POST['submit'])) {
             $assignmentName = $conn->real_escape_string($_POST['assignmentName']);
             $dueDate = $conn->real_escape_string($_POST['dueDate']);
 
-            // Insert query including TeacherID
-            $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate, TeacherID)
-                    VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate', '$teacherID')";
-
-            if ($conn->query($sql) === TRUE) {
-                echo "File uploaded and assignment created successfully.";
+            // Check if Due Date is before HandOut Date
+            if (strtotime($dueDate) < strtotime($handOutDate)) {
+                $errorMessage = "Error: Due date cannot be before the handout date.";
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
-            }
+                // Insert query including TeacherID
+                $sql = "INSERT INTO assignments (ModuleID, AssignmentName, filename, folder_path, HandOutDate, DueDate, TeacherID)
+                        VALUES ('$moduleID', '$assignmentName', '$filename', '$folder_path', '$handOutDate', '$dueDate', '$teacherID')";
 
-            $conn->close();
+                if ($conn->query($sql) === TRUE) {
+                    $successMessage = "File uploaded and assignment created successfully.";
+                } else {
+                    $errorMessage = "Error: " . $sql . "<br>" . $conn->error;
+                }
+            }
         } else {
-            echo "Error uploading file.";
+            $errorMessage = "Error uploading file.";
         }
     }
+    $conn->close();
 }
 ?>
 
@@ -119,7 +126,7 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-                /* Global Styles */
+        /* Global Styles */
         body {
             margin: 0;
             padding: 0;
@@ -263,19 +270,35 @@ if (isset($_POST['submit'])) {
             transform-origin: left;
         }
 
-        .nav-links a:hover {
-            background-color: #388E3C;
-            border-radius: 5px;
-            transform: translateY(-5px);
-        }
+/* Center message containers */
+.message-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin: 20px 0; /* Add margin for spacing */
+}
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-        }
-</style>
+/* Error and success message styling */
+.error-message, .success-message {
+    padding: 10px;
+    border-radius: 5px;
+    width: 50%; /* Adjust width as necessary */
+    text-align: center; /* Center text inside the message box */
+}
+
+.error-message {
+    color: red;
+    border: 1px solid red;
+    background-color: #ffe6e6;
+}
+
+.success-message {
+    color: green;
+    border: 1px solid green;
+    background-color: #e6ffe6;
+}
+
+    </style>
 </head>
 <body>
     
@@ -296,6 +319,21 @@ if (isset($_POST['submit'])) {
     </div>
 </div>
 
+<!-- Display error message if it exists -->
+<?php if (!empty($errorMessage)): ?>
+    <div class="message-container">
+        <div class="error-message"><?= $errorMessage ?></div>
+    </div>
+<?php endif; ?>
+
+<!-- Display success message if it exists -->
+<?php if (!empty($successMessage)): ?>
+    <div class="message-container">
+        <div class="success-message"><?= $successMessage ?></div>
+    </div>
+<?php endif; ?>
+
+    
     <div class="container">
         <!-- Assignment Upload Form -->
         <div class="card mt-5">

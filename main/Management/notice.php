@@ -26,6 +26,8 @@ function connectDB() {
     return $conn;
 }
 
+$error_message = ""; // Variable to store error message
+
 // Handle file upload
 if (isset($_POST['submit'])) {
     $conn = connectDB(); // Establish database connection
@@ -36,8 +38,10 @@ if (isset($_POST['submit'])) {
     $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
     // Check if the uploaded file is a PDF and less than 10MB
-    if ($fileType != "pdf" || $_FILES["pdfFile"]["size"] > 10000000) {
-        echo "Error: Only PDF files less than 10MB are allowed.";
+    if ($fileType != "pdf") {
+        $error_message = "Error: Only PDF files are allowed.";
+    } elseif ($_FILES["pdfFile"]["size"] > 10000000) {
+        $error_message = "Error: File size must be less than 10MB.";
     } else {
         // Move uploaded file to the target directory
         if (move_uploaded_file($_FILES["pdfFile"]["tmp_name"], $targetFile)) {
@@ -53,15 +57,15 @@ if (isset($_POST['submit'])) {
             $stmt->bind_param("sss", $noticeName, $filename, $folder_path);
 
             if ($stmt->execute()) {
-                echo "Notice uploaded successfully.";
+                $error_message = "Notice uploaded successfully.";
             } else {
-                echo "Error: " . $stmt->error;
+                $error_message = "Error: " . $stmt->error;
             }
 
             $stmt->close();
             $conn->close(); // Close the database connection
         } else {
-            echo "Error uploading the file.";
+            $error_message = "Error uploading the file.";
         }
     }
 }
@@ -268,6 +272,14 @@ if (isset($_POST['submit'])) {
                 <h4 class="card-title text-center">Upload Notices</h4>
             </div>
             <div class="card-body">
+
+                <!-- Display error message if any -->
+                <?php if (!empty($error_message)) : ?>
+                    <div class="alert alert-warning">
+                        <?php echo $error_message; ?>
+                    </div>
+                <?php endif; ?>
+
                 <form method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="noticeName">Notice Name:</label>
@@ -284,11 +296,6 @@ if (isset($_POST['submit'])) {
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
-
     <script>
     // Toggle Sidebar
     const hamburger = document.querySelector('.hamburger');
@@ -297,6 +304,6 @@ if (isset($_POST['submit'])) {
     hamburger.addEventListener('click', function() {
         sidebar.classList.toggle('active');
     });
-</script>
+    </script>
 </body>
 </html>
