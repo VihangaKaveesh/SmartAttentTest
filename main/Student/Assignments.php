@@ -57,7 +57,7 @@ function getAttendancePercentage($conn, $studentId) {
 
 $attendancePercentage = getAttendancePercentage($conn, $studentId);
 if ($attendancePercentage < 80) {
-    echo "<script>alert('You must have an attendance percentage of at least 80% to send an email.');</script>";
+    echo "<script>alert('You must have an attendance percentage of at least 80% to access the assignment portal.');</script>";
     exit();
 }
 
