@@ -11,14 +11,16 @@ require '../phpmailer/src/SMTP.php';
 
 // Check if the management or admin is logged in
 if ($_SESSION['role'] != 'management') {
-    die("Access Denied");
+    echo "<div class='error-message'>Access Denied</div>";
+    exit;
 }
 
 // Get ModuleID from GET request
 $module_id = isset($_GET['module_id']) ? $_GET['module_id'] : null;
 
 if (!$module_id) {
-    die("Module ID not provided");
+    echo "<div class='error-message'>Module ID not provided</div>";
+    exit;
 }
 
 // Fetch the email addresses of all students following the given module
@@ -35,7 +37,8 @@ while ($row = $result->fetch_assoc()) {
 
 // Check if students exist
 if (empty($students)) {
-    die("No students found for the given module.");
+    echo "<div class='error-message'>No students found for the given module.</div>";
+    exit;
 }
 
 // Handle form submission
@@ -58,8 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->Port       = 587; // TCP port to connect to
 
             // Recipients
-             // Recipients
-    $mail->setFrom('blacksnow2k03@gmail.com', 'Attendance System'); // Set sender's email
+            $mail->setFrom('blacksnow2k03@gmail.com', 'Attendance System'); // Set sender's email
             $mail->addAddress($email);
 
             // Content
@@ -70,13 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->SMTPDebug = 0; // Set to 2 for verbose debug output
             $mail->send();
         } catch (Exception $e) {
-            echo "Message could not be sent to {$email}. Mailer Error: {$mail->ErrorInfo}"; // Error message
+            echo "<div class='error-message'>Message could not be sent to {$email}. Mailer Error: {$mail->ErrorInfo}</div>"; // Error message
         }
     }
 
-    echo "Emails have been sent to all students following the module.";
+    echo "<div class='success-message'>Emails have been sent to all students following the module.</div>";
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -212,6 +215,32 @@ button[type="submit"] {
 /* Button hover effect */
 button[type="submit"]:hover {
     background-color: #218838;
+}
+
+/* Error message styling */
+.error-message {
+    color: #ff4d4d;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border: 1px solid #ff4d4d;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Success message styling */
+.success-message {
+    color: #28a745;
+    background-color: #d4edda;
+    padding: 10px;
+    border: 1px solid #28a745;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+    font-family: Arial, sans-serif;
 }
 
 /* Responsive design for smaller screens */
