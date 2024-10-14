@@ -33,10 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("ii", $student_id, $session_id);
 
         if ($stmt->execute()) {
-            echo "Attendance recorded successfully!";
+            echo "<script>
+                alert('Attendance recorded successfully!');
+                window.location.href = 'studentDashboard.php';
+            </script>";
         } else {
-            echo "Error recording attendance: " . $stmt->error;
+            echo "<script>
+                alert('Error recording attendance: " . $stmt->error . "');
+            </script>";
         }
+        
 
         // Clear session variables after successful attendance
         unset($_SESSION['verification_code']);

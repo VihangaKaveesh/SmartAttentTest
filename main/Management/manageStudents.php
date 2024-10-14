@@ -429,8 +429,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
             echo "<td>" . htmlspecialchars($row['LastName']) . "</td>";
             echo "<td>" . htmlspecialchars($row['Email']) . "</td>";
             echo "<td>" . htmlspecialchars($row['PhoneNumber']) . "</td>";
-            echo "<td><a href='?action=edit&id=" . $row['StudentID'] . "'>Edit</a> | <a href='?action=delete&id=" . $row['StudentID'] . "' onclick='return confirm(\"Are you sure you want to delete this teacher?\")'>Delete</a></td>";
-            echo "</tr>";
+            echo '<td>
+            <a href="?action=edit&id=' . $row['StudentID'] . '">Edit</a> | 
+            <a href="?action=delete&id=' . $row['StudentID'] . '" onclick="return confirm(\'Are you sure you want to delete this student?\')">Delete</a> | 
+            <a href="attendanceAnalysis.php?student_id=' . $row['StudentID'] . '">View Attendance</a>
+        </td>';
+        echo '</tr>';
         }
     } else {
         echo "<tr><td colspan='6'>No students found.</td></tr>";
